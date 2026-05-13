@@ -29,8 +29,36 @@ Already recommended:
 - `CHANGELOG.md`
 - `.github/workflows/smoke-test.yml`
 - `docs/TESTING.md`
-- `docs/GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md`
 - `docs/NEW_GODOT_DEV_README.md`
+
+## AI Agent / Planning Scratch Files
+
+Do not keep agent-specific instructions, planning scratchpads, or prompt files in the public repository.
+
+Before release, make sure files or folders like these are removed from Git when they are only internal workflow material:
+
+- `AGENTS.md`
+- `agent*.md`
+- `copilot-instructions.md`
+- `codex*.md`
+- `cline*.md`
+- `cursor*.md`
+- `PLAN.md`
+- `PLANNING.md`
+- `TASKS.md`
+- `PROMPT.md`
+- `prompts/`
+- `notes/`
+- `scratch/`
+- `ai/`
+- `.cursor/`
+- `.cline/`
+- `.codex/`
+- `.github/copilot-instructions.md`
+- `.github/instructions/`
+- `.github/prompts/`
+
+Keep this cleanup limited to the current working tree and currently tracked files. If sensitive content may already exist in Git history, handle that separately instead of rewriting history as part of normal release prep.
 
 ## Screenshot
 

@@ -1,6 +1,9 @@
 @tool
 extends RefCounted
 
+const ProcessUsageCheck = preload("res://addons/project_doctor_mini/scanner/checks/process_usage_check.gd")
+const ExportPresetsCheck = preload("res://addons/project_doctor_mini/scanner/checks/export_presets_check.gd")
+
 const LARGE_TEXTURE_THRESHOLD := 2048
 const SCENE_NODE_COUNT_THRESHOLD := 250
 const EXCLUDED_DIRECTORIES := ["res://reports"]
@@ -34,10 +37,10 @@ func scan() -> Dictionary:
     _check_broken_resource_paths()
     _check_large_textures()
     _check_scene_node_counts()
-    _check_process_usage()
+    _append_findings(ProcessUsageCheck.new().run(files, Callable(self, "_read_text_file")))
     _check_empty_folders()
     _check_unused_files()
-    _check_export_presets()
+    _append_findings(ExportPresetsCheck.new().run())
     _sort_findings()
 
     var tool_version := _load_tool_version()
@@ -180,26 +183,6 @@ func _check_scene_node_counts() -> void:
                 "Consider splitting the scene or reviewing generated node structure."
             )
 
-func _check_process_usage() -> void:
-    for file_path in files:
-        if not _has_extension(file_path, ["gd"]):
-            continue
-
-        var text := _read_text_file(file_path)
-        if text == "":
-            continue
-
-        for line in text.split("\n"):
-            if line.strip_edges().begins_with("func _process("):
-                _add_finding(
-                    "process_usage",
-                    "info",
-                    file_path,
-                    "Script implements _process().",
-                    "Confirm per-frame work is necessary and lightweight."
-                )
-                break
-
 func _check_empty_folders() -> void:
     for folder_path in folders:
         if folder_path == "res://":
@@ -222,16 +205,6 @@ func _check_unused_files() -> void:
                 "Verify manually before deleting. Dynamic loads may not be detected."
             )
 
-func _check_export_presets() -> void:
-    if not FileAccess.file_exists("res://export_presets.cfg"):
-        _add_finding(
-            "export_presets_missing",
-            "warning",
-            "res://export_presets.cfg",
-            "Export presets are missing.",
-            "Create export presets before release builds."
-        )
-
 func _build_summary() -> Dictionary:
     var summary := {"errors": 0, "warnings": 0, "info": 0}
     for finding in findings:
@@ -253,6 +226,9 @@ func _add_finding(id: String, severity: String, path: String, message: String, r
         "message": message,
         "recommendation": recommendation
     })
+
+func _append_findings(new_findings: Array[Dictionary]) -> void:
+    findings.append_array(new_findings)
 
 func _has_extension(path: String, extensions: Array) -> bool:
     return path.get_extension().to_lower() in extensions
