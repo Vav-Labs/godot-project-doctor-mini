@@ -1,172 +1,199 @@
 # Godot Project Doctor Mini
 
-A small Godot 4 editor plugin that scans the current project and generates a simple diagnostic report.
+[![Smoke Test](https://github.com/Vav-Labs/godot-project-doctor-mini/actions/workflows/smoke-test.yml/badge.svg)](https://github.com/Vav-Labs/godot-project-doctor-mini/actions/workflows/smoke-test.yml)
+[![Godot 4.6](https://img.shields.io/badge/Godot-4.6-blue)](https://godotengine.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Status: MVP](https://img.shields.io/badge/status-MVP-orange)](#roadmap)
 
-## Getting Started
+Godot Project Doctor Mini is a small Godot 4 editor plugin that scans a project and generates simple Markdown and JSON diagnostic reports.
 
-This repository is primarily a Godot editor plugin project, not a runtime game UI project.
+It helps catch common project hygiene issues such as missing scripts, broken resource paths, oversized textures, heavy scenes, empty folders, and missing export presets.
 
-If you are opening it for the first time:
+## Status
 
-1. Open the repository in Godot.
-2. Open the same folder in VS Code.
-3. Make sure the plugin is enabled.
-4. Open the `Project Doctor` dock in the Godot editor.
-5. Run one scan and inspect the generated reports in `reports/`.
+This project is an early MVP. It is usable for local project checks, but the scanner is intentionally conservative and should not be treated as a full dependency graph analyzer yet.
 
-If you are new to Godot or new to this repository, start with [docs/NEW_GODOT_DEV_README.md](docs/NEW_GODOT_DEV_README.md).
+## Features
 
-## Current MVP
+- Godot editor dock named `Project Doctor`
+- One-click project scan
+- Markdown and JSON report output
+- Headless scan script for local automation or CI
+- Severity summary for errors, warnings, and info findings
+- Severity filters in the editor dock
+- Button to open the generated reports folder
 
-The plugin adds a dock named `Project Doctor` inside the Godot editor. The dock has a `Scan Project` button that runs basic project checks and exports:
+## Preview
 
-- `reports/project-doctor-report.md`
-- `reports/project-doctor-report.json`
+A real screenshot of the editor dock will be added before the first tagged public release.
+
+Planned asset path:
+
+```text
+docs/assets/project-doctor-dock.png
+```
 
 ## Checks
 
-- Missing scripts
-- Broken resource paths
-- Large textures over threshold
-- Scenes with too many nodes
-- Scripts using `_process()`
-- Empty folders
-- Possibly unused files
-- Missing export presets
+| Check | Severity | Purpose |
+| --- | --- | --- |
+| Missing scripts | Error | Finds scene/resource references to scripts that no longer exist. |
+| Broken resource paths | Error | Finds referenced `res://` paths that cannot be found. |
+| Large textures | Warning | Flags textures above the current size threshold. |
+| Scenes with many nodes | Warning | Highlights scenes that may need review or splitting. |
+| Scripts using `_process()` | Info | Marks scripts with per-frame work for manual review. |
+| Empty folders | Info | Helps keep the project tree tidy. |
+| Possibly unused files | Info | Finds files not referenced by scanned text resources. |
+| Missing export presets | Warning | Reminds you to create export presets before release builds. |
 
 ## Requirements
 
-- Godot 4.6.2 Mono
-- VS Code
-- VS Code extensions:
-  - `geequlim.godot-tools`
-  - `github.copilot-chat`
+- Godot 4.6 or newer
 
-The MVP is GDScript-first. C# support may be added later after a real `.csproj` / `.sln` exists.
+The plugin is written in GDScript and runs inside the Godot editor.
 
-## Enable The Plugin
+## Installation
 
-The Project Doctor UI appears inside the Godot editor, not in the running game window.
+To use the plugin in another Godot project:
 
-To enable it:
+1. Copy `addons/project_doctor_mini/` into the target project's `addons/` folder.
+2. Open the project in Godot.
+3. Go to `Project > Project Settings > Plugins`.
+4. Enable `Godot Project Doctor Mini`.
+5. Open the `Project Doctor` dock in the editor.
 
-1. Open the project in the Godot editor.
-2. Go to `Project > Project Settings > Plugins`.
-3. Enable `Godot Project Doctor Mini`.
-4. Open the `Project Doctor` dock on the right side of the editor.
+To try it in this repository, open this project in Godot and enable the plugin from the same Plugins screen.
 
-If you press `Run Project`, Godot launches the main runtime scene. That is separate from the editor plugin UI.
+## Usage
 
-## Basic Usage
-
-Once the plugin is enabled:
+The Project Doctor UI appears inside the Godot editor. It does not appear in the running game window.
 
 1. Open the `Project Doctor` dock.
 2. Click `Scan Project`.
-3. Review the status message and summary counts.
-4. Filter findings by severity if needed.
-5. Use `Open Reports Folder` to inspect the generated files.
-
-The dock shows findings directly in the editor and writes the same scan results to Markdown and JSON.
-
-## VS Code Setup
-
-Workspace settings keep the local Godot executable path in one place:
-
-```text
-godotTools.editorPath.godot4
-```
-
-Tasks and launch configurations reference that setting instead of repeating the executable path.
-
-The GDScript language server is expected at:
-
-```text
-127.0.0.1:6008
-```
-
-If VS Code shows `Couldn't connect to the GDScript language server at 127.0.0.1:6008`, open this project in the Godot editor and run the VS Code command `Godot Tools: Start the GDScript Language Server for this workspace`.
-
-## Useful Tasks
-
-From VS Code, run:
-
-- `Godot: Open Editor`
-- `Godot: Run Project`
-- `Godot: Validate Project Headless`
-- `Godot: Scan Project Headless`
-- `Godot: Smoke Test Project Doctor`
-
-`Godot: Validate Project Headless` opens and closes the project as a sanity check. `Godot: Scan Project Headless` runs the Project Doctor scanner and exports the Markdown/JSON reports into `reports/`. `Godot: Smoke Test Project Doctor` validates the report schema and confirms the generated report files can be written.
-
-For the full manual and headless testing flow, see [docs/TESTING.md](docs/TESTING.md).
-
-Equivalent command shape:
-
-```text
-godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
-```
-
-## Generated Reports
+3. Review the summary and findings list.
+4. Use the severity filters if needed.
+5. Open the generated reports from `reports/`.
 
 Each scan writes:
 
 - `reports/project-doctor-report.md`
 - `reports/project-doctor-report.json`
 
-The Markdown report is meant for quick reading in GitHub, VS Code, or a text editor.
-The JSON report is meant for stable machine-readable output and automation.
+## Headless Scan
 
-## Troubleshooting
+You can run the scanner without opening the editor dock:
 
-### I ran the project and do not see the plugin UI
+```text
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+```
 
-That is expected if you used `Run Project`. The plugin UI appears only inside the Godot editor dock.
+The smoke test validates the report schema and confirms that the report writers can create files:
 
-### I do not see the `Project Doctor` dock
+```text
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+```
 
-Check `Project > Project Settings > Plugins` and confirm that `Godot Project Doctor Mini` is enabled.
+## Report Format
 
-### VS Code cannot connect to the GDScript language server
+The JSON report uses this top-level shape:
 
-Open the project in Godot first, then run:
+```json
+{
+  "tool": "Godot Project Doctor Mini",
+  "tool_version": "0.1.0",
+  "generated_at": "2026-05-13T00:00:00",
+  "project_root": "res://",
+  "scan_duration_ms": 18,
+  "summary": {
+    "errors": 0,
+    "warnings": 1,
+    "info": 0
+  },
+  "findings": []
+}
+```
 
-`Godot Tools: Start the GDScript Language Server for this workspace`
+Each finding includes:
 
-### Reports do not appear yet
+```json
+{
+  "id": "export_presets_missing",
+  "severity": "warning",
+  "title": "Export Presets Missing",
+  "path": "res://export_presets.cfg",
+  "message": "Export presets are missing.",
+  "recommendation": "Create export presets before release builds."
+}
+```
 
-Run a scan first. The `reports/` folder is created when a scan writes output.
-
-### I want a quick health check before editing more code
-
-Run `Godot: Validate Project Headless`, then `Godot: Scan Project Headless`, then `Godot: Smoke Test Project Doctor`.
-
-## AI Workflow
-
-This project uses GitHub Copilot as the main VS Code coding agent, with ChatGPT/Codex for planning and review, and MCP as an optional shared tool/context layer.
-
-See [docs/MULTI_AGENT_ORCHESTRATION.md](docs/MULTI_AGENT_ORCHESTRATION.md) for the current orchestration plan.
-
-## Plugin Files
+## Project Structure
 
 ```text
 addons/project_doctor_mini/
   plugin.cfg
   project_doctor_plugin.gd
   project_doctor_dock.gd
-  tools/run_project_scan.gd
   scanner/project_scanner.gd
   report/markdown_report_writer.gd
   report/json_report_writer.gd
+  tools/run_project_scan.gd
+  tools/run_project_doctor_smoke_test.gd
 ```
+
+## Development
+
+Useful local checks:
+
+```text
+godot --headless --path . --quit
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+```
+
+See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
+
+## Documentation
+
+- [Project concept](docs/GODOT_PROJECT_DOCTOR_MINI.md)
+- [Implementation plan](docs/GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md)
+- [Testing guide](docs/TESTING.md)
+- [Public release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md)
+- [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md)
 
 ## Known Limitations
 
-- Dynamic resource loads may not always be detected by the scanner.
-- `Possibly unused file` findings should be manually confirmed before deleting anything.
-- The plugin UI is editor-only and is not part of the runtime game scene.
-- Thresholds are currently simple defaults and are not yet exposed as plugin settings.
+- Dynamic resource loads may not always be detected.
+- `Possibly unused file` findings must be manually reviewed before deleting files.
+- The current scanner uses simple text/resource checks, not a full Godot dependency graph.
+- Thresholds are currently hardcoded defaults.
+- The plugin is editor-only and does not appear in the running game window.
 
-## Notes
+## Roadmap
 
-This project intentionally starts as a compact GDScript-first editor plugin. C# support can be added later after the Godot/VS Code/AI/MCP workflow is proven.
+- Plugin settings for thresholds and ignore patterns
+- Baseline file for accepted findings
+- More conservative unused-file detection
+- Export profile readiness checks per platform
+- Import settings analysis
+- Scene dependency graph
+- GitHub Action for headless scan on pull requests
+- Asset Library packaging checklist
+
+## Contributing
+
+Issues and small pull requests are welcome.
+
+Good first contribution areas:
+
+- Add a new scanner check.
+- Improve false-positive handling.
+- Add a sample project for testing.
+- Improve report formatting.
+- Add screenshots or short usage examples.
+
+Please keep changes small and focused while the project is still in MVP shape.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).

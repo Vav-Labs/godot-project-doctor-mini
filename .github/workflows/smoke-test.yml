@@ -1,0 +1,48 @@
+name: Smoke Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  godot-smoke-test:
+    name: Godot Headless Smoke Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.6.2
+          use-dotnet: true
+          include-templates: false
+
+      - name: Verify Godot
+        run: godot --version
+
+      - name: Validate project opens headlessly
+        run: godot --headless --path . --quit
+
+      - name: Run Project Doctor smoke test
+        run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+
+      - name: Run Project Doctor scan
+        run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+
+      - name: Upload generated reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-doctor-reports
+          path: reports/
+          if-no-files-found: error
