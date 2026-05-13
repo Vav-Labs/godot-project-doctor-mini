@@ -30,6 +30,7 @@ obj/
 # Project Doctor generated reports
 project-doctor-report.md
 project-doctor-report.json
+project-doctor-reports/
 
 # OS files
 .DS_Store

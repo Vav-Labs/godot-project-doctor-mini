@@ -17,7 +17,7 @@
 
 - .NET SDK: `10.0.204`
 - Runtimes: .NET 8, 9, 10 installed.
-- Για Godot C# προτεινεται να κρατησουμε εγκατεστημενο και .NET 8 runtime/SDK compatibility, γιατι πολλα Godot/C# workflows στοχευουν ακομα LTS οικοσυστημα.
+- Το MVP ειναι GDScript-first. C# μπορει να προστεθει αργοτερα αφου δημιουργηθει πραγματικο `.csproj` / `.sln` απο Godot.
 
 ### Git / GitHub
 
@@ -69,15 +69,13 @@
 
 ## 2. Κενα / προβληματα που βρεθηκαν
 
-1. Δεν υπαρχει Godot project ακομα στο `Godot_Pr_01`.
-2. Δεν υπαρχουν Godot-specific VS Code extensions:
-   - `geequlim.godot-tools`
-   - `neikeq.godot-csharp-vscode`
-3. Δεν υπαρχει workspace `.vscode/settings.json`, `.vscode/launch.json`, `.vscode/tasks.json`.
-4. Δεν υπαρχει ενεργο MCP setup. Το user `mcp.json` ειναι αδειο.
-5. Δεν υπαρχει `codex` CLI στο PATH.
-6. Δεν υπαρχει `GODOT` environment variable ή σταθερο alias/path για τον engine.
-7. Το VS Code CLI υπαρχει αλλα στο audit δεν επεστρεψε καθαρα `code --list-extensions`, οποτε καλυτερα να στηριχθουμε σε filesystem/VS Code UI για verification.
+1. Υπαρχει αρχικο Godot project με main scene και editor plugin skeleton.
+2. Υπαρχει workspace `.vscode/settings.json`, `.vscode/launch.json`, `.vscode/tasks.json`.
+3. Τα VS Code tasks/launch configs διαβαζουν το Godot executable απο το `godotTools.editorPath.godot4`, ωστε το path να αλλαζει σε ενα σημειο.
+4. Υπαρχει πραγματικο headless scanner task: `Godot: Scan Project Headless`.
+5. Δεν υπαρχει ενεργο MCP setup. Το user `mcp.json` ειναι αδειο.
+6. Δεν υπαρχει `codex` CLI στο PATH.
+7. Δεν υπαρχει Git remote ακομα, αρα τα commits μενουν local και το push παραλειπεται.
 
 ## 3. Προτεινομενο target setup
 
@@ -93,21 +91,27 @@
 
 Για C# project:
 
-- Να δημιουργηθει project με .NET/C# support απο τον Godot editor.
-- Να γινει generate/open του solution απο Godot, ωστε να δημιουργηθουν `.csproj` / `.sln`.
+- Το MVP δεν χρησιμοποιει C# ακομα.
+- Αν αποφασιστει hybrid αργοτερα, να δημιουργηθει πρωτα C# solution απο Godot και μετα να επανελθουν C# launch configs/extensions στο active setup.
 
 ### B. VS Code extensions
 
 Να εγκατασταθουν:
 
 ```vscode-extensions
-geequlim.godot-tools,neikeq.godot-csharp-vscode
+geequlim.godot-tools
 ```
 
 Να παραμεινουν ενεργα:
 
 ```vscode-extensions
-github.copilot-chat,ms-dotnettools.csdevkit,ms-dotnettools.csharp,openai.chatgpt,eamodio.gitlens,github.vscode-pull-request-github
+github.copilot-chat,openai.chatgpt,eamodio.gitlens,github.vscode-pull-request-github
+```
+
+Προαιρετικα για μελλοντικο C# / hybrid workflow:
+
+```vscode-extensions
+neikeq.godot-csharp-vscode,ms-dotnettools.csdevkit,ms-dotnettools.csharp
 ```
 
 Προαιρετικα, αν γραψεις πολυ shader code:
@@ -121,9 +125,9 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 Οταν δημιουργηθει το Godot project, προτεινεται να προστεθουν:
 
 - `.vscode/extensions.json` με recommended extensions.
-- `.vscode/settings.json` με Godot executable path και C#/Godot defaults.
-- `.vscode/launch.json` για attach/debug C#.
-- `.vscode/tasks.json` για open Godot editor και run project.
+- `.vscode/settings.json` με το Godot executable path σε ενα σημειο.
+- `.vscode/launch.json` για GDScript launch.
+- `.vscode/tasks.json` για open/run/headless validate/headless scan.
 - `.gitignore` για Godot + C# artifacts.
 - `.editorconfig` για σταθερο formatting.
 - `README.md` με βασικα run/debug commands.
@@ -177,22 +181,19 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 
 ### Phase 1 - Βασικο Godot project
 
-1. Δημιουργια Godot project στο `Godot_Pr_01` με Godot 4.6.2 Mono.
-2. Επιλογη scripting model:
-   - C# primary, με GDScript μονο οπου βολευει για scenes/tools.
-   - Ή GDScript primary, με C# μονο για performance/system code.
-3. Generate C# solution αν χρησιμοποιηθει C#.
-4. Initialize Git repo.
-5. Προσθηκη `.gitignore`, `.editorconfig`, `README.md`.
+1. Δημιουργηθηκε Godot project στο `Godot_Pr_01` με Godot 4.6.2 Mono.
+2. Επιλεχθηκε GDScript-first MVP.
+3. Δημιουργηθηκε plugin skeleton στο `addons/project_doctor_mini/`.
+4. Δημιουργηθηκε Git repo με local commits.
+5. Προστεθηκαν `.gitignore`, `.editorconfig`, `README.md` και orchestration docs.
 
 ### Phase 2 - VS Code integration
 
 1. Install `geequlim.godot-tools`.
-2. Install `neikeq.godot-csharp-vscode` αν το project εχει C#.
-3. Προσθηκη workspace `.vscode/extensions.json`.
-4. Προσθηκη workspace `.vscode/settings.json` με engine path.
-5. Προσθηκη launch/tasks για run/debug.
-6. Ρυθμιση Godot external editor προς VS Code.
+2. Προσθηκη workspace `.vscode/extensions.json`.
+3. Προσθηκη workspace `.vscode/settings.json` με engine path σε ενα σημειο.
+4. Προσθηκη launch/tasks για run/debug/headless validation/headless scanner.
+5. Ρυθμιση Godot external editor προς VS Code.
 
 ### Phase 3 - AI workflow
 
@@ -218,20 +219,16 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 
 1. Install Godot VS Code extensions:
    - `geequlim.godot-tools`
-   - `neikeq.godot-csharp-vscode`
-2. Δημιουργια Godot project στο `Godot_Pr_01` απο τον Godot editor.
-3. Δημιουργια Git repo μολις υπαρξει `project.godot`.
-4. Προσθηκη workspace recommended extensions.
-5. Προσθηκη Godot/C# `.gitignore`.
-6. Ρυθμιση Godot external editor προς VS Code.
+2. Χρηση `Godot: Validate Project Headless` για sanity check.
+3. Χρηση `Godot: Scan Project Headless` για πραγματικο scanner/report validation.
+4. Προσθηκη GitHub remote οταν αποφασιστει repository name/visibility.
+5. Ρυθμιση Godot external editor προς VS Code.
 
 Μετα το project creation:
 
-1. Add `.vscode/settings.json`.
-2. Add `.vscode/tasks.json`.
-3. Add `.vscode/launch.json`.
-4. Add `.github/copilot-instructions.md` με Godot/C# conventions.
-5. Add initial MCP config, αν συμφωνηθει ποιοι servers θες.
+1. Add initial MCP config, αν συμφωνηθει ποιοι servers θες.
+2. Add C# solution/config μονο αν αποφασιστει hybrid workflow.
+3. Add GitHub Actions αφου υπαρχει remote και explicit validation command.
 
 ## 6. Προτεινομενη τελικη μορφη workspace
 
@@ -256,10 +253,10 @@ Godot_Pr_01/
 
 ## 7. Αποφαση που μενει να παρθει
 
-Πριν εφαρμοστουν οι αλλαγες, θελει επιλογη scripting style:
+Η τρεχουσα αποφαση ειναι GDScript-first MVP.
 
-- Επιλογη 1: C# primary. Καλυτερο αν θες strong typing, .NET ecosystem, μεγαλυτερο project structure.
-- Επιλογη 2: GDScript primary. Καλυτερο αν θες γρηγορο iteration με Godot-native workflow.
-- Επιλογη 3: Hybrid. Πρακτικο default: gameplay/prototypes σε GDScript, systems/tools/performance code σε C#.
+C# / hybrid workflow μπορει να προστεθει αργοτερα, αλλα μονο αφου:
 
-Προταση μου για το δικο σου setup: Hybrid με C#-ready project, επειδη εχεις ηδη Mono Godot, C# Dev Kit, .NET και Copilot/ChatGPT tooling εγκατεστημενα.
+1. Δημιουργηθει `.csproj` / `.sln` απο Godot.
+2. Επανελθουν C# VS Code recommendations και launch configs.
+3. Υπαρξει συγκεκριμενος λογος για C# scanner helpers ή heavier parsing.

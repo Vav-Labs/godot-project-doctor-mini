@@ -26,17 +26,19 @@ The plugin adds a dock named `Project Doctor` inside the Godot editor. The dock 
 - VS Code
 - VS Code extensions:
   - `geequlim.godot-tools`
-  - `neikeq.godot-csharp-vscode`
-  - `ms-dotnettools.csdevkit`
   - `github.copilot-chat`
+
+The MVP is GDScript-first. C# support may be added later after a real `.csproj` / `.sln` exists.
 
 ## VS Code Setup
 
-Workspace settings point to the local Godot executable:
+Workspace settings keep the local Godot executable path in one place:
 
 ```text
-C:\Users\Stratos\Godot Projects\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64.exe
+godotTools.editorPath.godot4
 ```
+
+Tasks and launch configurations reference that setting instead of repeating the executable path.
 
 The GDScript language server is expected at:
 
@@ -53,6 +55,15 @@ From VS Code, run:
 - `Godot: Open Editor`
 - `Godot: Run Project`
 - `Godot: Validate Project Headless`
+- `Godot: Scan Project Headless`
+
+`Godot: Validate Project Headless` opens and closes the project as a sanity check. `Godot: Scan Project Headless` runs the Project Doctor scanner and exports the Markdown/JSON reports.
+
+Equivalent command shape:
+
+```text
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+```
 
 ## AI Workflow
 
@@ -67,6 +78,7 @@ addons/project_doctor_mini/
   plugin.cfg
   project_doctor_plugin.gd
   project_doctor_dock.gd
+  tools/run_project_scan.gd
   scanner/project_scanner.gd
   report/markdown_report_writer.gd
   report/json_report_writer.gd
