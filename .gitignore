@@ -1,0 +1,36 @@
+# Godot
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+*.translation
+
+# Godot exports
+builds/
+exports/
+*.pck
+*.zip
+*.exe
+*.app
+*.apk
+*.aab
+*.ipa
+
+# C# / .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.csproj.DotSettings.user
+
+# VS Code local state
+.vscode/.ropeproject/
+
+# Project Doctor generated reports
+project-doctor-report.md
+project-doctor-report.json
+
+# OS files
+.DS_Store
+Thumbs.db

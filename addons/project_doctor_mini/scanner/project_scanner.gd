@@ -1,0 +1,240 @@
+@tool
+extends RefCounted
+
+const LARGE_TEXTURE_THRESHOLD := 2048
+const SCENE_NODE_COUNT_THRESHOLD := 250
+const TEXT_EXTENSIONS := ["gd", "tscn", "tres", "cfg", "godot", "import", "md", "json"]
+const TEXTURE_EXTENSIONS := ["png", "jpg", "jpeg", "webp"]
+const UNUSED_CANDIDATE_EXTENSIONS := ["png", "jpg", "jpeg", "webp", "wav", "ogg", "mp3", "tres", "res", "tscn", "gdshader"]
+
+var findings: Array[Dictionary] = []
+var files: Array[String] = []
+var folders: Array[String] = []
+var referenced_paths: Dictionary = {}
+
+func scan() -> Dictionary:
+    findings.clear()
+    files.clear()
+    folders.clear()
+    referenced_paths.clear()
+
+    _walk_directory("res://")
+    _collect_references()
+    _check_missing_scripts()
+    _check_broken_resource_paths()
+    _check_large_textures()
+    _check_scene_node_counts()
+    _check_process_usage()
+    _check_empty_folders()
+    _check_unused_files()
+    _check_export_presets()
+
+    return {
+        "tool": "Godot Project Doctor Mini",
+        "generated_at": Time.get_datetime_string_from_system(true),
+        "project_root": "res://",
+        "summary": _build_summary(),
+        "findings": findings
+    }
+
+func _walk_directory(path: String) -> void:
+    var dir := DirAccess.open(path)
+    if dir == null:
+        _add_finding("scan_error", "error", path, "Could not open directory.", "Check folder permissions or project state.")
+        return
+
+    folders.append(path)
+    dir.list_dir_begin()
+    var entry := dir.get_next()
+    while entry != "":
+        if not entry.begins_with("."):
+            var child_path := path.path_join(entry)
+            if dir.current_is_dir():
+                _walk_directory(child_path)
+            else:
+                files.append(child_path)
+        entry = dir.get_next()
+    dir.list_dir_end()
+
+func _collect_references() -> void:
+    var regex := RegEx.new()
+    regex.compile("res://[^\"' )\\]\\}]+")
+
+    for file_path in files:
+        if not _has_extension(file_path, TEXT_EXTENSIONS):
+            continue
+
+        var text := FileAccess.get_file_as_string(file_path)
+        for result in regex.search_all(text):
+            var resource_path := result.get_string().strip_edges()
+            referenced_paths[resource_path] = true
+
+func _check_missing_scripts() -> void:
+    for file_path in files:
+        if not _has_extension(file_path, ["tscn", "tres"]):
+            continue
+
+        var text := FileAccess.get_file_as_string(file_path)
+        for line in text.split("\n"):
+            if line.contains("type=\"Script\"") and line.contains("path=\"res://"):
+                var script_path := _extract_resource_path(line)
+                if script_path != "" and not FileAccess.file_exists(script_path):
+                    _add_finding(
+                        "missing_script",
+                        "error",
+                        file_path,
+                        "Scene or resource references a missing script: %s" % script_path,
+                        "Restore the script or remove the broken reference."
+                    )
+
+func _check_broken_resource_paths() -> void:
+    for resource_path in referenced_paths.keys():
+        if resource_path == "res://":
+            continue
+        if not FileAccess.file_exists(resource_path) and not DirAccess.dir_exists_absolute(resource_path):
+            _add_finding(
+                "broken_resource_path",
+                "error",
+                resource_path,
+                "Referenced resource path does not exist.",
+                "Update the reference or restore the missing resource."
+            )
+
+func _check_large_textures() -> void:
+    for file_path in files:
+        if not _has_extension(file_path, TEXTURE_EXTENSIONS):
+            continue
+
+        var image := Image.new()
+        var error := image.load(file_path)
+        if error != OK:
+            _add_finding("texture_load_error", "warning", file_path, "Could not read texture dimensions.", "Reimport or validate the texture file.")
+            continue
+
+        var width := image.get_width()
+        var height := image.get_height()
+        if width > LARGE_TEXTURE_THRESHOLD or height > LARGE_TEXTURE_THRESHOLD:
+            _add_finding(
+                "large_texture",
+                "warning",
+                file_path,
+                "Texture is %dx%d, above the %dpx threshold." % [width, height, LARGE_TEXTURE_THRESHOLD],
+                "Resize, compress, or use platform-specific import settings."
+            )
+
+func _check_scene_node_counts() -> void:
+    for file_path in files:
+        if not _has_extension(file_path, ["tscn"]):
+            continue
+
+        var node_count := 0
+        var text := FileAccess.get_file_as_string(file_path)
+        for line in text.split("\n"):
+            if line.begins_with("[node "):
+                node_count += 1
+
+        if node_count > SCENE_NODE_COUNT_THRESHOLD:
+            _add_finding(
+                "scene_too_many_nodes",
+                "warning",
+                file_path,
+                "Scene has %d nodes, above the %d node threshold." % [node_count, SCENE_NODE_COUNT_THRESHOLD],
+                "Consider splitting the scene or reviewing generated node structure."
+            )
+
+func _check_process_usage() -> void:
+    for file_path in files:
+        if not _has_extension(file_path, ["gd"]):
+            continue
+
+        var text := FileAccess.get_file_as_string(file_path)
+        if text.contains("func _process("):
+            _add_finding(
+                "process_usage",
+                "info",
+                file_path,
+                "Script implements _process().",
+                "Confirm per-frame work is necessary and lightweight."
+            )
+
+func _check_empty_folders() -> void:
+    for folder_path in folders:
+        if folder_path == "res://":
+            continue
+        if _is_folder_empty(folder_path):
+            _add_finding("empty_folder", "info", folder_path, "Folder is empty.", "Remove it or add a .gdignore if it is intentionally empty.")
+
+func _check_unused_files() -> void:
+    for file_path in files:
+        if file_path == "res://icon.svg":
+            continue
+        if not _has_extension(file_path, UNUSED_CANDIDATE_EXTENSIONS):
+            continue
+        if not referenced_paths.has(file_path):
+            _add_finding(
+                "possibly_unused_file",
+                "info",
+                file_path,
+                "File is not referenced by scanned text resources.",
+                "Verify manually before deleting. Dynamic loads may not be detected."
+            )
+
+func _check_export_presets() -> void:
+    if not FileAccess.file_exists("res://export_presets.cfg"):
+        _add_finding(
+            "export_presets_missing",
+            "warning",
+            "res://export_presets.cfg",
+            "Export presets are missing.",
+            "Create export presets before release builds."
+        )
+
+func _build_summary() -> Dictionary:
+    var summary := {"errors": 0, "warnings": 0, "info": 0}
+    for finding in findings:
+        match finding.get("severity", "info"):
+            "error":
+                summary.errors += 1
+            "warning":
+                summary.warnings += 1
+            _:
+                summary.info += 1
+    return summary
+
+func _add_finding(id: String, severity: String, path: String, message: String, recommendation: String) -> void:
+    findings.append({
+        "id": id,
+        "severity": severity,
+        "title": id.capitalize(),
+        "path": path,
+        "message": message,
+        "recommendation": recommendation
+    })
+
+func _has_extension(path: String, extensions: Array) -> bool:
+    return path.get_extension().to_lower() in extensions
+
+func _extract_resource_path(text: String) -> String:
+    var start := text.find("res://")
+    if start == -1:
+        return ""
+
+    var end := text.find("\"", start)
+    if end == -1:
+        return text.substr(start)
+    return text.substr(start, end - start)
+
+func _is_folder_empty(path: String) -> bool:
+    var dir := DirAccess.open(path)
+    if dir == null:
+        return false
+
+    dir.list_dir_begin()
+    var entry := dir.get_next()
+    while entry != "":
+        if not entry.begins_with("."):
+            dir.list_dir_end()
+            return false
+        entry = dir.get_next()
+    dir.list_dir_end()
+    return true
