@@ -4,24 +4,20 @@ One-click project scan + Markdown/JSON diagnostic report for Godot projects.
 
 ## Purpose
 
-Godot Project Doctor Mini is a small Godot editor plugin used as the first test project for a VS Code + Copilot + ChatGPT/Codex + MCP workflow.
+Godot Project Doctor Mini is a small Godot editor plugin for scanning a project and generating simple diagnostic reports.
 
 The plugin scans the current Godot project and produces a simple diagnostic report that helps catch common project hygiene, performance, and export-readiness issues early.
 
 ## Why This Project
 
-This is a good first project because it touches the exact workflow we want to validate:
+This is a good compact plugin project because it touches practical Godot editor tooling areas:
 
 - Godot editor plugin structure
 - GDScript scripting
-- VS Code editing and navigation
-- Git/GitHub workflow
-- Copilot-assisted implementation
-- ChatGPT/Codex-assisted planning and review
-- MCP filesystem/Git/GitHub context later
 - UI dock/panel inside the Godot editor
 - Project filesystem scanning
 - Markdown and JSON report generation
+- Headless execution for local checks or CI
 - Possible C# expansion later
 
 ## MVP Goal
