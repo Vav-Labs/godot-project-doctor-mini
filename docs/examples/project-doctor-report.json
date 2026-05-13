@@ -1,0 +1,38 @@
+{
+    "findings": [
+        {
+            "id": "broken_resource_path",
+            "message": "Referenced resource path does not exist.",
+            "path": "res://assets/textures/example.png",
+            "recommendation": "Update the reference or restore the missing resource.",
+            "severity": "error",
+            "title": "Broken Resource Path"
+        },
+        {
+            "id": "broken_resource_path",
+            "message": "Referenced resource path does not exist.",
+            "path": "res://export_presets.cfg",
+            "recommendation": "Update the reference or restore the missing resource.",
+            "severity": "error",
+            "title": "Broken Resource Path"
+        },
+        {
+            "id": "export_presets_missing",
+            "message": "Export presets are missing.",
+            "path": "res://export_presets.cfg",
+            "recommendation": "Create export presets before release builds.",
+            "severity": "warning",
+            "title": "Export Presets Missing"
+        }
+    ],
+    "generated_at": "2026-05-13T18:34:49",
+    "project_root": "res://",
+    "scan_duration_ms": 43,
+    "summary": {
+        "errors": 2,
+        "info": 0,
+        "warnings": 1
+    },
+    "tool": "Godot Project Doctor Mini",
+    "tool_version": "0.1.0"
+}
