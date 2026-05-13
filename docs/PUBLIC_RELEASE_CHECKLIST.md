@@ -83,24 +83,6 @@ Then replace the placeholder section in `README.md` with:
 ![Project Doctor dock](docs/assets/project-doctor-dock.png)
 ```
 
-## Demo GIF
-
-Add:
-
-```text
-docs/assets/project-doctor-demo.gif
-```
-
-Recommended flow:
-
-1. Open `Project Doctor` dock.
-2. Click `Scan Project`.
-3. Show summary update.
-4. Toggle one severity filter.
-5. Click `Open Reports Folder`.
-
-Keep the GIF short, ideally under 10 seconds.
-
 ## Local Validation
 
 Run before tagging:

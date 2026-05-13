@@ -14,12 +14,6 @@ This project follows a simple MVP-friendly versioning style until the plugin is 
 - GitHub Actions smoke test workflow.
 - New developer onboarding notes.
 
-### Planned
-
-- README screenshot of the Project Doctor dock.
-- Short demo GIF.
-- First public release tag.
-
 ## [0.1.0] - 2026-05-13
 
 ### Initial Release
