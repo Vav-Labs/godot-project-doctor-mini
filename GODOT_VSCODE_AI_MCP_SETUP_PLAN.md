@@ -5,24 +5,28 @@
 ## 1. Τι υπαρχει ηδη στο μηχανημα
 
 ### Godot
+
 - Υπαρχει Godot Mono: `Godot 4.6.2.stable.mono.official.71f334935`
 - Path engine:
   `C:\Users\Stratos\Godot Projects\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64.exe`
 - Console exe:
   `C:\Users\Stratos\Godot Projects\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe`
-- Το project folder `Godot_Pr_01` ειναι αδειο. Δεν υπαρχει ακομα `project.godot`, `.csproj`, `.sln`, `.vscode`, scenes ή scripts.
+- Το project folder `Godot_Pr_01` εχει πλεον αρχικο Godot project, VS Code config, plugin skeleton, docs και Git repo.
 
-### .NET / C#
+### .NET / C #
+
 - .NET SDK: `10.0.204`
 - Runtimes: .NET 8, 9, 10 installed.
 - Για Godot C# προτεινεται να κρατησουμε εγκατεστημενο και .NET 8 runtime/SDK compatibility, γιατι πολλα Godot/C# workflows στοχευουν ακομα LTS οικοσυστημα.
 
 ### Git / GitHub
+
 - Git: `2.53.0.windows.3`
 - GitHub CLI: `2.86.0`
 - `gh auth status`: logged in as `Hall9000VS` με scopes `gist`, `read:org`, `repo`, `workflow`.
 
 ### Node / npm / Python / Docker
+
 - Node: `v24.14.0`
 - npm: `11.9.0`
 - Python: `3.10.11`
@@ -30,14 +34,17 @@
 - npm global packages: μονο `corepack` και `npm`.
 
 ### AI / Chat tools
+
 - VS Code GitHub Copilot Chat extension: installed.
 - OpenAI ChatGPT VS Code extension: installed.
 - Anthropic Claude Code VS Code extension: installed.
+- Cline: removed intentionally. Δεν θα χρησιμοποιηθει σε αυτο το setup.
 - CLI `codex`: not found.
 - CLI `claude`: not found, παροτι υπαρχει το VS Code extension.
 - User-level VS Code `mcp.json`: υπαρχει αλλα ειναι αδειο.
 
 ### VS Code extensions που υπαρχουν ηδη και βοηθανε
+
 - `github.copilot-chat`
 - `github.vscode-pull-request-github`
 - `github.vscode-github-actions`
@@ -54,6 +61,7 @@
 - `ms-vscode-remote.remote-containers`
 
 ### VS Code settings που υπαρχουν ηδη
+
 - Copilot next edit suggestions enabled.
 - GitLens AI model: `copilot:gpt-4.1`.
 - MCP gallery enabled: `chat.mcp.gallery.enabled: true`.
@@ -74,6 +82,7 @@
 ## 3. Προτεινομενο target setup
 
 ### A. Godot editor
+
 Στον Godot editor:
 
 - Editor > Editor Settings > Text Editor > External:
@@ -83,10 +92,12 @@
     `--goto {file}:{line}:{col}`
 
 Για C# project:
+
 - Να δημιουργηθει project με .NET/C# support απο τον Godot editor.
 - Να γινει generate/open του solution απο Godot, ωστε να δημιουργηθουν `.csproj` / `.sln`.
 
 ### B. VS Code extensions
+
 Να εγκατασταθουν:
 
 ```vscode-extensions
@@ -106,6 +117,7 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 ```
 
 ### C. Workspace files για το project
+
 Οταν δημιουργηθει το Godot project, προτεινεται να προστεθουν:
 
 - `.vscode/extensions.json` με recommended extensions.
@@ -117,6 +129,7 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 - `README.md` με βασικα run/debug commands.
 
 ### D. MCP setup
+
 Προτεινομενη αρχικη MCP στρατηγικη:
 
 1. Κρατα user-level MCP για προσωπικα/γενικα tools.
@@ -134,21 +147,36 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 Το υπαρχον `mcp.json` ειναι αδειο, αρα δεν υπαρχει κινδυνος συγκρουσης.
 
 ### E. Codex / ChatGPT
+
 Υπαρχει το `openai.chatgpt` VS Code extension, αλλα δεν υπαρχει `codex` CLI.
 
 Προτεινομενη χρηση:
+
 - VS Code Copilot Chat για inline repo work, edits, tests, GitHub integration.
 - ChatGPT extension για δευτερη γνωμη, σχεδιασμο, explanations, brainstorming.
 - Codex CLI μονο αν το θες σαν terminal-native agent. Αν δεν το χρειαζεσαι καθημερινα, μην το βαλεις ακομα.
 
 Αν αποφασιστει εγκατασταση Codex CLI:
+
 - Να γινει απο την επισημη OpenAI οδηγια/extension documentation που αντιστοιχει στην εκδοση του 2026.
 - Να μην μπουν API keys σε plain text workspace files.
 - Secrets μονο σε OS credential store, VS Code auth provider ή environment variables εκτος repo.
 
+### F. Multi-agent orchestration
+
+Το προτεινομενο orchestration χωρις Cline ειναι:
+
+1. GitHub Copilot ως βασικος coding agent μεσα στο VS Code.
+2. ChatGPT/Codex για planning, design review, risk review και release notes.
+3. MCP ως κοινο tool/context layer για filesystem, Git και GitHub οταν χρειαζεται.
+4. GitHub ως source of truth για commits, issues, PRs και μελλοντικο CI.
+
+Αναλυτικο πλανο: [MULTI_AGENT_ORCHESTRATION.md](MULTI_AGENT_ORCHESTRATION.md).
+
 ## 4. Προτεινομενη σειρα υλοποιησης
 
 ### Phase 1 - Βασικο Godot project
+
 1. Δημιουργια Godot project στο `Godot_Pr_01` με Godot 4.6.2 Mono.
 2. Επιλογη scripting model:
    - C# primary, με GDScript μονο οπου βολευει για scenes/tools.
@@ -158,6 +186,7 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 5. Προσθηκη `.gitignore`, `.editorconfig`, `README.md`.
 
 ### Phase 2 - VS Code integration
+
 1. Install `geequlim.godot-tools`.
 2. Install `neikeq.godot-csharp-vscode` αν το project εχει C#.
 3. Προσθηκη workspace `.vscode/extensions.json`.
@@ -166,14 +195,17 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 6. Ρυθμιση Godot external editor προς VS Code.
 
 ### Phase 3 - AI workflow
+
 1. Copilot Chat ως default coding agent με repo context.
 2. GitLens AI να μεινει σε Copilot model.
 3. ChatGPT extension για design docs, architecture reviews, explanations.
 4. Codex CLI μονο αν ζητηθει terminal-native workflow.
 5. Δημιουργια project instruction file για AI:
    - `.github/copilot-instructions.md` ή `.instructions.md`, αναλογα με το προτιμωμενο VS Code workflow.
+6. Cline να παραμεινει εκτος setup για να κρατησουμε λιγοτερους agents και πιο καθαρη ευθυνη.
 
 ### Phase 4 - MCP
+
 1. Συμπληρωση user-level `mcp.json` με 1-2 trusted servers.
 2. GitHub MCP μονο με auth που δεν αποθηκευει tokens στο repo.
 3. Filesystem MCP με allowlist μονο στο project path.
