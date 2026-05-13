@@ -14,32 +14,28 @@ The purpose of this test flow is to verify that:
 
 ## Fastest Checks
 
-Use these VS Code tasks first:
-
-- `Godot: Validate Project Headless`
-- `Godot: Scan Project Headless`
-- `Godot: Smoke Test Project Doctor`
+Use these headless commands first:
 
 Recommended order:
 
-1. Run `Godot: Validate Project Headless`.
-2. Run `Godot: Scan Project Headless`.
-3. Run `Godot: Smoke Test Project Doctor`.
+1. Run `godot --headless --path . --quit`.
+2. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd`.
+3. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd`.
 
 ## What Each Task Confirms
 
-### `Godot: Validate Project Headless`
+### Headless Project Validation
 
 Confirms that the project opens headlessly without immediate startup errors.
 
-### `Godot: Scan Project Headless`
+### Headless Project Doctor Scan
 
 Confirms that the scanner runs and writes:
 
 - `reports/project-doctor-report.md`
 - `reports/project-doctor-report.json`
 
-### `Godot: Smoke Test Project Doctor`
+### Project Doctor Smoke Test
 
 Confirms that:
 
@@ -94,6 +90,12 @@ These are controlled checks for the main finding types.
 2. Run a scan.
 3. Confirm the export presets warning appears.
 4. Restore the file.
+
+### Documentation Asset Reference
+
+1. Confirm the README references `docs/assets/project-doctor-dock.png`.
+2. Run a scan.
+3. Confirm the screenshot asset is not reported as `possibly_unused_file`.
 
 ## Report Checks
 

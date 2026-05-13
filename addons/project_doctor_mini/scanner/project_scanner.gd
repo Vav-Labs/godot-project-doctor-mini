@@ -11,7 +11,7 @@ const SEVERITY_ORDER := {
     "warning": 1,
     "info": 2
 }
-const RESOURCE_TEXT_EXTENSIONS := ["tscn", "tres", "cfg", "godot", "import"]
+const RESOURCE_TEXT_EXTENSIONS := ["tscn", "tres", "cfg", "godot", "import", "md"]
 const TEXTURE_EXTENSIONS := ["png", "jpg", "jpeg", "webp"]
 const UNUSED_CANDIDATE_EXTENSIONS := ["png", "jpg", "jpeg", "webp", "wav", "ogg", "mp3", "tres", "res", "tscn", "gdshader"]
 
@@ -75,8 +75,11 @@ func _walk_directory(path: String) -> void:
     dir.list_dir_end()
 
 func _collect_references() -> void:
-    var regex := RegEx.new()
-    regex.compile("res://[A-Za-z0-9_./@%+-]+")
+    var resource_regex := RegEx.new()
+    resource_regex.compile("res://[A-Za-z0-9_./@%+-]+")
+
+    var markdown_regex := RegEx.new()
+    markdown_regex.compile("!?\\[[^\\]]*\\]\\(([^)]+)\\)")
 
     for file_path in files:
         var extension := file_path.get_extension().to_lower()
@@ -88,10 +91,13 @@ func _collect_references() -> void:
             continue
 
         for line in text.split("\n"):
+            if extension == "md":
+                _collect_markdown_references(file_path, line, markdown_regex)
+
             if extension == "gd" and not _is_gdscript_resource_load_line(line):
                 continue
 
-            for result in regex.search_all(line):
+            for result in resource_regex.search_all(line):
                 var resource_path := result.get_string().strip_edges()
                 referenced_paths[resource_path] = true
 
@@ -287,6 +293,36 @@ func _read_text_file(path: String) -> String:
     if file == null:
         return ""
     return file.get_as_text()
+
+func _collect_markdown_references(markdown_file_path: String, line: String, markdown_regex: RegEx) -> void:
+    for result in markdown_regex.search_all(line):
+        var raw_path := result.get_string(1).strip_edges()
+        var resolved_path := _resolve_markdown_path(markdown_file_path, raw_path)
+        if resolved_path != "":
+            referenced_paths[resolved_path] = true
+
+func _resolve_markdown_path(markdown_file_path: String, raw_path: String) -> String:
+    if raw_path == "":
+        return ""
+
+    var clean_path := raw_path.split("#")[0].split("?")[0].strip_edges()
+    if clean_path == "":
+        return ""
+    if clean_path.begins_with("http://") or clean_path.begins_with("https://"):
+        return ""
+    if clean_path.begins_with("mailto:") or clean_path.begins_with("data:"):
+        return ""
+
+    if clean_path.begins_with("res://"):
+        return clean_path
+
+    var project_root_candidate := "res://" + clean_path.trim_prefix("./")
+    if FileAccess.file_exists(project_root_candidate) or DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(project_root_candidate)):
+        return project_root_candidate
+
+    var base_dir := markdown_file_path.get_base_dir()
+    var global_path := ProjectSettings.globalize_path(base_dir.path_join(clean_path))
+    return ProjectSettings.localize_path(global_path)
 
 func _load_tool_version() -> String:
     var config := ConfigFile.new()
