@@ -45,6 +45,19 @@
                 "res://addons/project_doctor_mini/tools/run_project_scan.gd"
             ],
             "problemMatcher": []
+        },
+        {
+            "label": "Godot: Smoke Test Project Doctor",
+            "type": "process",
+            "command": "${config:godotTools.editorPath.godot4}",
+            "args": [
+                "--headless",
+                "--path",
+                "${workspaceFolder}",
+                "--script",
+                "res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd"
+            ],
+            "problemMatcher": []
         }
     ]
 }
