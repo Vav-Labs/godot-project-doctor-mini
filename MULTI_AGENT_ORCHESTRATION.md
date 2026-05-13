@@ -188,7 +188,37 @@ For AI/MCP setup changes:
 - The affected agent or tool has a clear owner and role.
 - Any required authentication is stored outside the repository.
 - MCP access is scoped to the minimum useful context.
-- The setup is recorded in the relevant instruction or setup document.
+- The setup is recorded in the relevant setup document, not only in chat history.
+
+## Validation Command
+
+Preferred validation:
+
+```text
+Godot: Validate Project Headless
+```
+
+Equivalent command-line validation should be documented in the repository once the local Godot executable path is known.
+
+Example shape:
+
+```text
+godot --headless --path . --quit
+```
+
+The exact command may differ by OS and Godot installation path. For this workspace, the VS Code task currently points to the local Godot 4.6.2 Mono console executable.
+
+## Generated Output Policy
+
+Generated scanner reports are local diagnostic artifacts.
+
+Rules:
+
+- Reports should not be committed by default.
+- `.gitignore` should exclude generated report files and report folders.
+- Example reports may be committed only when intentionally used as fixtures, documentation samples, or release assets.
+- Report filenames should be deterministic enough for debugging but not overwrite previous runs unexpectedly.
+- Reports must not include secrets, absolute machine paths, or private environment data.
 
 ## Branch And Commit Policy
 
@@ -279,6 +309,7 @@ Adding a new check requires:
 ## Guardrails
 
 - Do not store API keys or tokens in the repository.
+- ChatGPT/Codex should not be treated as the direct file-editing agent in the normal workflow. It may produce plans, reviews, snippets, or patch suggestions, but Copilot applies changes after inspecting local context.
 - Keep project-level settings portable where possible.
 - Keep MCP filesystem access restricted to the workspace.
 - Prefer one active editing agent at a time.
