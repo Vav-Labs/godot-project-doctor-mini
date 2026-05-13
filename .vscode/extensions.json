@@ -1,9 +1,6 @@
 {
     "recommendations": [
         "geequlim.godot-tools",
-        "neikeq.godot-csharp-vscode",
-        "ms-dotnettools.csdevkit",
-        "ms-dotnettools.csharp",
         "github.copilot-chat",
         "openai.chatgpt",
         "eamodio.gitlens",

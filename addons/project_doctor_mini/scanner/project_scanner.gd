@@ -3,7 +3,7 @@ extends RefCounted
 
 const LARGE_TEXTURE_THRESHOLD := 2048
 const SCENE_NODE_COUNT_THRESHOLD := 250
-const TEXT_EXTENSIONS := ["gd", "tscn", "tres", "cfg", "godot", "import", "md", "json"]
+const RESOURCE_TEXT_EXTENSIONS := ["tscn", "tres", "cfg", "godot", "import"]
 const TEXTURE_EXTENSIONS := ["png", "jpg", "jpeg", "webp"]
 const UNUSED_CANDIDATE_EXTENSIONS := ["png", "jpg", "jpeg", "webp", "wav", "ogg", "mp3", "tres", "res", "tscn", "gdshader"]
 
@@ -58,16 +58,21 @@ func _walk_directory(path: String) -> void:
 
 func _collect_references() -> void:
     var regex := RegEx.new()
-    regex.compile("res://[^\"' )\\]\\}]+")
+    regex.compile("res://[A-Za-z0-9_./@%+-]+")
 
     for file_path in files:
-        if not _has_extension(file_path, TEXT_EXTENSIONS):
+        var extension := file_path.get_extension().to_lower()
+        if extension != "gd" and not _has_extension(file_path, RESOURCE_TEXT_EXTENSIONS):
             continue
 
         var text := FileAccess.get_file_as_string(file_path)
-        for result in regex.search_all(text):
-            var resource_path := result.get_string().strip_edges()
-            referenced_paths[resource_path] = true
+        for line in text.split("\n"):
+            if extension == "gd" and not _is_gdscript_resource_load_line(line):
+                continue
+
+            for result in regex.search_all(line):
+                var resource_path := result.get_string().strip_edges()
+                referenced_paths[resource_path] = true
 
 func _check_missing_scripts() -> void:
     for file_path in files:
@@ -148,14 +153,16 @@ func _check_process_usage() -> void:
             continue
 
         var text := FileAccess.get_file_as_string(file_path)
-        if text.contains("func _process("):
-            _add_finding(
-                "process_usage",
-                "info",
-                file_path,
-                "Script implements _process().",
-                "Confirm per-frame work is necessary and lightweight."
-            )
+        for line in text.split("\n"):
+            if line.strip_edges().begins_with("func _process("):
+                _add_finding(
+                    "process_usage",
+                    "info",
+                    file_path,
+                    "Script implements _process().",
+                    "Confirm per-frame work is necessary and lightweight."
+                )
+                break
 
 func _check_empty_folders() -> void:
     for folder_path in folders:
@@ -213,6 +220,9 @@ func _add_finding(id: String, severity: String, path: String, message: String, r
 
 func _has_extension(path: String, extensions: Array) -> bool:
     return path.get_extension().to_lower() in extensions
+
+func _is_gdscript_resource_load_line(line: String) -> bool:
+    return line.contains("preload(") or line.contains("load(") or line.contains("ResourceLoader.load(")
 
 func _extract_resource_path(text: String) -> String:
     var start := text.find("res://")

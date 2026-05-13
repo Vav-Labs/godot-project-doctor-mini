@@ -198,6 +198,12 @@ Preferred validation:
 Godot: Validate Project Headless
 ```
 
+Preferred scanner validation:
+
+```text
+Godot: Scan Project Headless
+```
+
 Equivalent command-line validation should be documented in the repository once the local Godot executable path is known.
 
 Example shape:
@@ -206,7 +212,13 @@ Example shape:
 godot --headless --path . --quit
 ```
 
-The exact command may differ by OS and Godot installation path. For this workspace, the VS Code task currently points to the local Godot 4.6.2 Mono console executable.
+Scanner command shape:
+
+```text
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+```
+
+The exact command may differ by OS and Godot installation path. For this workspace, VS Code tasks read the local Godot 4.6.2 Mono executable from `godotTools.editorPath.godot4`.
 
 ## Generated Output Policy
 

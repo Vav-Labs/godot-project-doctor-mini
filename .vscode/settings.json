@@ -6,7 +6,6 @@
     "godotTools.lsp.autoReconnect.attempts": 20,
     "godotTools.lsp.autoReconnect.cooldown": 3000,
     "godotTools.editor.revealTerminal": true,
-    "godot.csharp.executablePath": "C:\\Users\\Stratos\\Godot Projects\\Godot_v4.6.2-stable_mono_win64\\Godot_v4.6.2-stable_mono_win64.exe",
     "files.associations": {
         "*.gd": "gdscript",
         "*.tscn": "gdscene",

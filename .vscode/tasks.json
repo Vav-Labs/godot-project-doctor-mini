@@ -4,7 +4,7 @@
         {
             "label": "Godot: Open Editor",
             "type": "process",
-            "command": "C:\\Users\\Stratos\\Godot Projects\\Godot_v4.6.2-stable_mono_win64\\Godot_v4.6.2-stable_mono_win64.exe",
+            "command": "${config:godotTools.editorPath.godot4}",
             "args": [
                 "--path",
                 "${workspaceFolder}"
@@ -14,7 +14,7 @@
         {
             "label": "Godot: Run Project",
             "type": "process",
-            "command": "C:\\Users\\Stratos\\Godot Projects\\Godot_v4.6.2-stable_mono_win64\\Godot_v4.6.2-stable_mono_win64.exe",
+            "command": "${config:godotTools.editorPath.godot4}",
             "args": [
                 "--path",
                 "${workspaceFolder}"
@@ -24,12 +24,25 @@
         {
             "label": "Godot: Validate Project Headless",
             "type": "process",
-            "command": "C:\\Users\\Stratos\\Godot Projects\\Godot_v4.6.2-stable_mono_win64\\Godot_v4.6.2-stable_mono_win64_console.exe",
+            "command": "${config:godotTools.editorPath.godot4}",
             "args": [
                 "--headless",
                 "--path",
                 "${workspaceFolder}",
                 "--quit"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Godot: Scan Project Headless",
+            "type": "process",
+            "command": "${config:godotTools.editorPath.godot4}",
+            "args": [
+                "--headless",
+                "--path",
+                "${workspaceFolder}",
+                "--script",
+                "res://addons/project_doctor_mini/tools/run_project_scan.gd"
             ],
             "problemMatcher": []
         }
