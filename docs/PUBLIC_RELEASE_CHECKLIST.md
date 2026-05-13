@@ -37,7 +37,7 @@ Already recommended:
 Add:
 
 ```text
-docs/assets/project-doctor-dock.svg
+docs/assets/project-doctor-dock.png
 ```
 
 Recommended screenshot contents:
@@ -52,7 +52,7 @@ Recommended screenshot contents:
 Then replace the placeholder section in `README.md` with:
 
 ```markdown
-![Project Doctor dock](docs/assets/project-doctor-dock.svg)
+![Project Doctor dock](docs/assets/project-doctor-dock.png)
 ```
 
 ## Demo GIF
