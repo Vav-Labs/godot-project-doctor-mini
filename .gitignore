@@ -30,6 +30,9 @@ obj/
 # Project Doctor generated reports
 reports/
 
+# Local screenshot sandbox
+sandbox_screenshot/
+
 # OS files
 .DS_Store
 Thumbs.db
