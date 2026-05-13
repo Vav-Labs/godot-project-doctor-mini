@@ -56,8 +56,11 @@ From VS Code, run:
 - `Godot: Run Project`
 - `Godot: Validate Project Headless`
 - `Godot: Scan Project Headless`
+- `Godot: Smoke Test Project Doctor`
 
-`Godot: Validate Project Headless` opens and closes the project as a sanity check. `Godot: Scan Project Headless` runs the Project Doctor scanner and exports the Markdown/JSON reports into `reports/`.
+`Godot: Validate Project Headless` opens and closes the project as a sanity check. `Godot: Scan Project Headless` runs the Project Doctor scanner and exports the Markdown/JSON reports into `reports/`. `Godot: Smoke Test Project Doctor` validates the report schema and confirms the generated report files can be written.
+
+For the full manual and headless testing flow, see [docs/TESTING.md](docs/TESTING.md).
 
 Equivalent command shape:
 
@@ -70,6 +73,8 @@ godot --headless --path . --script res://addons/project_doctor_mini/tools/run_pr
 This project uses GitHub Copilot as the main VS Code coding agent, with ChatGPT/Codex for planning and review, and MCP as an optional shared tool/context layer.
 
 See [docs/MULTI_AGENT_ORCHESTRATION.md](docs/MULTI_AGENT_ORCHESTRATION.md) for the current orchestration plan.
+
+If you are new to Godot or opening this repository for the first time, start with [docs/NEW_GODOT_DEV_README.md](docs/NEW_GODOT_DEV_README.md).
 
 ## Plugin Files
 
