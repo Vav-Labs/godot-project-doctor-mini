@@ -163,6 +163,119 @@ Example tasks:
 | Release checklist | ChatGPT/Codex | GitHub MCP |
 | CI/export automation | Copilot | ChatGPT/Codex planning |
 
+## Definition Of Done
+
+A task is done only when the implementation, validation, and documentation all match the size of the change.
+
+For code changes:
+
+- The project opens in Godot without new editor errors.
+- `Godot: Validate Project Headless` passes, or the reason it cannot run is documented.
+- The plugin still loads from `addons/project_doctor_mini/plugin.cfg`.
+- New findings follow the shared finding shape: `id`, `severity`, `title`, `path`, `message`, `recommendation`.
+- Generated reports remain ignored by Git.
+- User-facing behavior is reflected in README or planning docs when it changes.
+
+For documentation-only changes:
+
+- The updated document has one clear purpose.
+- Links point to existing repository files.
+- The content matches the current project state, not a future assumption.
+- No secrets, local tokens, or private credentials are included.
+
+For AI/MCP setup changes:
+
+- The affected agent or tool has a clear owner and role.
+- Any required authentication is stored outside the repository.
+- MCP access is scoped to the minimum useful context.
+- The setup is recorded in the relevant instruction or setup document.
+
+## Branch And Commit Policy
+
+Use small, reviewable commits. Prefer one completed task per commit.
+
+Branch policy:
+
+- `master` is acceptable for local MVP work before a remote exists.
+- After a GitHub remote is created, use short feature branches for meaningful changes.
+- Branch names should be lowercase and action-oriented, such as `feature/scanner-checks`, `fix/plugin-load`, or `docs/ai-workflow`.
+- Avoid mixing setup, feature work, and cleanup in the same branch when the changes can be separated naturally.
+
+Commit policy:
+
+- Commit after a coherent change validates locally.
+- Use imperative commit messages, such as `Add scanner report writers`.
+- Keep generated files out of commits unless they are intentional fixtures.
+- Do not commit `.godot/`, exported builds, diagnostic reports, API keys, tokens, or machine-local secrets.
+- If a remote exists, push only when the branch is ready to share or back up.
+
+Suggested commit message types:
+
+- `Add ...` for new behavior or files.
+- `Fix ...` for bugs.
+- `Update ...` for docs, config, or existing behavior.
+- `Refactor ...` for structure-preserving changes.
+- `Document ...` for documentation-only commits.
+
+## Required Repository Instruction Files
+
+These files keep agents aligned and reduce repeated setup explanation.
+
+Required now:
+
+- `.github/copilot-instructions.md`: repository-specific instructions for Copilot and compatible coding agents.
+- `README.md`: project entrypoint, run/debug notes, and current MVP status.
+- `MULTI_AGENT_ORCHESTRATION.md`: agent roles, workflow modes, policies, and guardrails.
+- `GODOT_PROJECT_DOCTOR_MINI.md`: product/MVP specification for the plugin.
+- `GODOT_VSCODE_AI_MCP_SETUP_PLAN.md`: machine and workspace setup notes.
+
+Recommended when the project grows:
+
+- `CONTRIBUTING.md`: contribution flow, local validation, issue/PR expectations.
+- `CHANGELOG.md`: user-facing changes by version.
+- `docs/scanner-checks.md`: detailed behavior and false-positive notes for each scanner check.
+- `.github/pull_request_template.md`: consistent PR summaries and validation checklists.
+- `.github/ISSUE_TEMPLATE/`: structured bug reports and feature requests.
+
+Instruction file rules:
+
+- Keep instructions short enough that agents can actually follow them.
+- Put durable project rules in `.github/copilot-instructions.md`.
+- Put task plans and design notes in docs, not in agent instruction files.
+- Update instruction files when the workflow changes, especially around tools, validation, and file ownership.
+- Do not duplicate secrets, tokens, or local-only authentication steps.
+
+## Scanner Heuristic Policy
+
+Scanner checks should be useful, explainable, and conservative. The goal is to surface likely issues without pretending every finding is certain.
+
+Heuristic rules:
+
+- Prefer `warning` or `info` when a check may produce false positives.
+- Use `error` only for clearly broken references or missing required files.
+- Every finding must include a practical recommendation.
+- Dynamic Godot behavior, such as runtime `load()` paths, should be described as a detection limitation when relevant.
+- Checks must not delete, move, rewrite, import, or reconfigure project files.
+- Checks should scan `res://` paths and avoid machine-specific absolute paths.
+- Thresholds should start simple and become configurable only after they prove useful.
+
+Severity guidance:
+
+| Severity | Use When |
+| --- | --- |
+| `error` | A referenced file or required project asset is missing. |
+| `warning` | The project may run, but export readiness, performance, or maintenance could suffer. |
+| `info` | The finding is a hygiene hint or needs manual confirmation. |
+
+Adding a new check requires:
+
+1. A stable `id`.
+2. A clear severity choice.
+3. A short title and message.
+4. A recommendation that tells the user what to do next.
+5. At least one manual test case in the planning docs or PR notes.
+6. A note if the check can miss dynamic behavior or report false positives.
+
 ## Guardrails
 
 - Do not store API keys or tokens in the repository.
