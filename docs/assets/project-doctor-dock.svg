@@ -1,0 +1,69 @@
+<svg width="1400" height="880" viewBox="0 0 1400 880" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="880" fill="#141A22"/>
+  <rect x="24" y="24" width="1352" height="832" rx="18" fill="#1D2632" stroke="#334155" stroke-width="2"/>
+  <rect x="24" y="24" width="1352" height="54" rx="18" fill="#243041"/>
+  <circle cx="56" cy="51" r="8" fill="#F87171"/>
+  <circle cx="82" cy="51" r="8" fill="#FBBF24"/>
+  <circle cx="108" cy="51" r="8" fill="#34D399"/>
+  <text x="700" y="58" text-anchor="middle" fill="#DCE6F2" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Godot Editor Preview</text>
+
+  <rect x="44" y="96" width="180" height="736" rx="12" fill="#17202B"/>
+  <text x="72" y="136" fill="#94A3B8" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="600">Scene</text>
+  <rect x="60" y="156" width="148" height="38" rx="8" fill="#273548"/>
+  <text x="78" y="181" fill="#E2E8F0" font-family="Consolas, monospace" font-size="18">Main</text>
+  <rect x="60" y="214" width="148" height="28" rx="6" fill="#1F2937"/>
+  <text x="78" y="234" fill="#8FA3B8" font-family="Consolas, monospace" font-size="16">Title: Label</text>
+
+  <rect x="244" y="96" width="704" height="736" rx="12" fill="#0F1721" stroke="#2B394A"/>
+  <text x="596" y="130" text-anchor="middle" fill="#334155" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="700">Game View</text>
+  <text x="596" y="410" text-anchor="middle" fill="#DCE6F2" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">Godot Project Doctor Mini</text>
+  <text x="596" y="452" text-anchor="middle" fill="#8FA3B8" font-family="Segoe UI, Arial, sans-serif" font-size="20">The plugin UI appears in the editor dock, not in the running game window.</text>
+
+  <rect x="968" y="96" width="388" height="736" rx="14" fill="#F8FAFC"/>
+  <rect x="968" y="96" width="388" height="56" rx="14" fill="#E2E8F0"/>
+  <text x="1162" y="131" text-anchor="middle" fill="#0F172A" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">Project Doctor</text>
+
+  <text x="998" y="186" fill="#0F172A" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Godot Project Doctor Mini</text>
+
+  <rect x="998" y="212" width="150" height="42" rx="10" fill="#0F766E"/>
+  <text x="1073" y="239" text-anchor="middle" fill="#F8FAFC" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Scan Project</text>
+
+  <rect x="1162" y="212" width="164" height="42" rx="10" fill="#CBD5E1"/>
+  <text x="1244" y="239" text-anchor="middle" fill="#0F172A" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">Open Reports Folder</text>
+
+  <text x="998" y="292" fill="#475569" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600">Show:</text>
+  <rect x="1044" y="274" width="78" height="30" rx="15" fill="#FCA5A5"/>
+  <text x="1083" y="294" text-anchor="middle" fill="#7F1D1D" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">Errors</text>
+  <rect x="1130" y="274" width="94" height="30" rx="15" fill="#FDE68A"/>
+  <text x="1177" y="294" text-anchor="middle" fill="#78350F" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">Warnings</text>
+  <rect x="1234" y="274" width="60" height="30" rx="15" fill="#BFDBFE"/>
+  <text x="1264" y="294" text-anchor="middle" fill="#1E3A8A" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">Info</text>
+
+  <rect x="998" y="324" width="328" height="56" rx="10" fill="#ECFEFF" stroke="#67E8F9"/>
+  <text x="1014" y="348" fill="#155E75" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700">Status</text>
+  <text x="1014" y="368" fill="#164E63" font-family="Segoe UI, Arial, sans-serif" font-size="14">Scan complete. Reports: res://reports/project-doctor-report.md</text>
+
+  <rect x="998" y="394" width="328" height="54" rx="10" fill="#F1F5F9"/>
+  <text x="1014" y="426" fill="#0F172A" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="700">Errors: 0  |  Warnings: 1  |  Info: 0</text>
+
+  <rect x="998" y="466" width="328" height="316" rx="12" fill="#FFFFFF" stroke="#CBD5E1"/>
+  <rect x="998" y="466" width="328" height="38" rx="12" fill="#E2E8F0"/>
+  <text x="1010" y="490" fill="#334155" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700">Severity</text>
+  <text x="1088" y="490" fill="#334155" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700">Finding</text>
+  <text x="1182" y="490" fill="#334155" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700">Path</text>
+  <text x="1268" y="490" fill="#334155" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700">Message</text>
+
+  <rect x="1006" y="516" width="316" height="72" rx="10" fill="#FEF3C7"/>
+  <text x="1018" y="543" fill="#92400E" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Warning</text>
+  <text x="1094" y="543" fill="#0F172A" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Export Presets Missing</text>
+  <text x="1188" y="543" fill="#334155" font-family="Consolas, monospace" font-size="12">res://export_presets.cfg</text>
+  <text x="1018" y="567" fill="#475569" font-family="Segoe UI, Arial, sans-serif" font-size="13">Export presets are missing.</text>
+
+  <rect x="1006" y="600" width="316" height="72" rx="10" fill="#F8FAFC"/>
+  <text x="1018" y="627" fill="#64748B" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Preview</text>
+  <text x="1094" y="627" fill="#0F172A" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">Large Texture</text>
+  <text x="1188" y="627" fill="#334155" font-family="Consolas, monospace" font-size="12">res://assets/ui/banner.png</text>
+  <text x="1018" y="651" fill="#475569" font-family="Segoe UI, Arial, sans-serif" font-size="13">Texture is above the 2048px threshold.</text>
+
+  <text x="1162" y="810" text-anchor="middle" fill="#64748B" font-family="Segoe UI, Arial, sans-serif" font-size="15">README preview illustration of the Project Doctor dock</text>
+</svg>

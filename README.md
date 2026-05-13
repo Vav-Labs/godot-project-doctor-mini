@@ -25,13 +25,9 @@ This project is an early MVP. It is usable for local project checks, but the sca
 
 ## Preview
 
-A real screenshot of the editor dock will be added before the first tagged public release.
+![Project Doctor dock preview](docs/assets/project-doctor-dock.svg)
 
-Planned asset path:
-
-```text
-docs/assets/project-doctor-dock.png
-```
+Current preview asset showing the dock layout and primary controls.
 
 ## Checks
 
