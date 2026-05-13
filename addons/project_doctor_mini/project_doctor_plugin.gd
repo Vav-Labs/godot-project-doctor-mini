@@ -6,11 +6,11 @@ const ProjectDoctorDock = preload("res://addons/project_doctor_mini/project_doct
 var dock: Control
 
 func _enter_tree() -> void:
-    dock = ProjectDoctorDock.new()
-    add_control_to_dock(DOCK_SLOT_RIGHT_UL, dock)
+	dock = ProjectDoctorDock.new()
+	add_control_to_dock(DOCK_SLOT_RIGHT_UL, dock)
 
 func _exit_tree() -> void:
-    if dock != null:
-        remove_control_from_docks(dock)
-        dock.free()
-        dock = null
+	if dock != null:
+		remove_control_from_docks(dock)
+		dock.free()
+		dock = null
