@@ -12,7 +12,6 @@ This project follows a simple MVP-friendly versioning style until the plugin is 
 - MIT license.
 - Contribution guidelines.
 - GitHub Actions smoke test workflow.
-- Implementation plan documentation.
 - New developer onboarding notes.
 
 ### Planned
@@ -23,7 +22,7 @@ This project follows a simple MVP-friendly versioning style until the plugin is 
 
 ## [0.1.0] - 2026-05-13
 
-### Added
+### Initial Release
 
 - Godot editor plugin registration.
 - `Project Doctor` editor dock.

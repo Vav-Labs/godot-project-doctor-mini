@@ -99,5 +99,4 @@ Run a scan first. The `reports/` folder is created when the scanner writes outpu
 ## Next Docs
 
 - [GODOT_PROJECT_DOCTOR_MINI.md](GODOT_PROJECT_DOCTOR_MINI.md)
-- [GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md](GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md)
 - [TESTING.md](TESTING.md)

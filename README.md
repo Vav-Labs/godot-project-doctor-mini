@@ -157,8 +157,6 @@ See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
 
 - [Project concept](docs/GODOT_PROJECT_DOCTOR_MINI.md)
 - [Architecture](docs/ARCHITECTURE.md)
-- [Implementation plan](docs/GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md)
-- [Portfolio readiness plan](docs/PORTFOLIO_READINESS_PLAN.md)
 - [Testing guide](docs/TESTING.md)
 - [Public release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md)
 - [Changelog](CHANGELOG.md)
