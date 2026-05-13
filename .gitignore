@@ -28,9 +28,7 @@ obj/
 .vscode/.ropeproject/
 
 # Project Doctor generated reports
-project-doctor-report.md
-project-doctor-report.json
-project-doctor-reports/
+reports/
 
 # OS files
 .DS_Store

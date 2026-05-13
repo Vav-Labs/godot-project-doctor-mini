@@ -6,8 +6,8 @@ A small Godot 4 editor plugin that scans the current project and generates a sim
 
 The plugin adds a dock named `Project Doctor` inside the Godot editor. The dock has a `Scan Project` button that runs basic project checks and exports:
 
-- `project-doctor-report.md`
-- `project-doctor-report.json`
+- `reports/project-doctor-report.md`
+- `reports/project-doctor-report.json`
 
 ## Checks
 
@@ -57,7 +57,7 @@ From VS Code, run:
 - `Godot: Validate Project Headless`
 - `Godot: Scan Project Headless`
 
-`Godot: Validate Project Headless` opens and closes the project as a sanity check. `Godot: Scan Project Headless` runs the Project Doctor scanner and exports the Markdown/JSON reports.
+`Godot: Validate Project Headless` opens and closes the project as a sanity check. `Godot: Scan Project Headless` runs the Project Doctor scanner and exports the Markdown/JSON reports into `reports/`.
 
 Equivalent command shape:
 
@@ -69,7 +69,7 @@ godot --headless --path . --script res://addons/project_doctor_mini/tools/run_pr
 
 This project uses GitHub Copilot as the main VS Code coding agent, with ChatGPT/Codex for planning and review, and MCP as an optional shared tool/context layer.
 
-See [MULTI_AGENT_ORCHESTRATION.md](MULTI_AGENT_ORCHESTRATION.md) for the current orchestration plan.
+See [docs/MULTI_AGENT_ORCHESTRATION.md](docs/MULTI_AGENT_ORCHESTRATION.md) for the current orchestration plan.
 
 ## Plugin Files
 

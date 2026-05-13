@@ -6,7 +6,7 @@ This repository is a Godot 4.6 editor plugin project.
 
 - Build a small Godot editor plugin named Godot Project Doctor Mini.
 - Provide one-click project diagnostics from a dock inside the Godot editor.
-- Export reports as `project-doctor-report.md` and `project-doctor-report.json`.
+- Export reports as `reports/project-doctor-report.md` and `reports/project-doctor-report.json`.
 - Keep the MVP simple, readable, and useful for testing VS Code, Copilot, ChatGPT/Codex, GitHub, and MCP workflows.
 
 ## Technical Context
