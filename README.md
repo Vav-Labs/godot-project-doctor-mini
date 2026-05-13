@@ -25,7 +25,7 @@ This project is an early MVP. It is usable for local project checks, but the sca
 
 ## Preview
 
-![Project Doctor dock preview](docs/assets/project-doctor-dock.svg)
+![Project Doctor dock preview](docs/assets/project-doctor-dock.png)
 
 Current preview asset showing the dock layout and primary controls.
 
