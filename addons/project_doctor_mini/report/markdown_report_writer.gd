@@ -1,11 +1,11 @@
 @tool
 extends RefCounted
 
-func write(report: Dictionary, output_path: String) -> void:
+func write(report: Dictionary, output_path: String) -> bool:
     var file := FileAccess.open(output_path, FileAccess.WRITE)
     if file == null:
         push_error("Could not write Markdown report: %s" % output_path)
-        return
+        return false
 
     var summary: Dictionary = report.get("summary", {})
     var lines: Array[String] = []
@@ -40,3 +40,4 @@ func write(report: Dictionary, output_path: String) -> void:
             lines.append("")
 
     file.store_string("\n".join(lines))
+    return true
