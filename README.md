@@ -54,6 +54,12 @@ From VS Code, run:
 - `Godot: Run Project`
 - `Godot: Validate Project Headless`
 
+## AI Workflow
+
+This project uses GitHub Copilot as the main VS Code coding agent, with ChatGPT/Codex for planning and review, and MCP as an optional shared tool/context layer.
+
+See [MULTI_AGENT_ORCHESTRATION.md](MULTI_AGENT_ORCHESTRATION.md) for the current orchestration plan.
+
 ## Plugin Files
 
 ```text
