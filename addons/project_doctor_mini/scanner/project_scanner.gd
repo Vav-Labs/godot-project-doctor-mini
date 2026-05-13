@@ -37,7 +37,7 @@ func scan() -> Dictionary:
     _check_broken_resource_paths()
     _check_large_textures()
     _check_scene_node_counts()
-    _append_findings(ProcessUsageCheck.new().run(files, Callable(self, "_read_text_file")))
+    _append_findings(ProcessUsageCheck.new().run(files, Callable(self , "_read_text_file")))
     _check_empty_folders()
     _check_unused_files()
     _append_findings(ExportPresetsCheck.new().run())

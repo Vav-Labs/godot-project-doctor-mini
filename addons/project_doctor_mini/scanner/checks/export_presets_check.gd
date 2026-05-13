@@ -5,7 +5,7 @@ func run() -> Array[Dictionary]:
     if FileAccess.file_exists("res://export_presets.cfg"):
         return []
 
-    return [{
+    return [ {
         "id": "export_presets_missing",
         "severity": "warning",
         "title": "Export Presets Missing",
