@@ -17,7 +17,7 @@ This project is still an early MVP, so small focused changes are the easiest to 
 1. Install Godot 4.6.x.
 2. Open this repository in Godot.
 3. Enable `Godot Project Doctor Mini` from `Project > Project Settings > Plugins`.
-4. Open the same folder in VS Code if you want to use the included tasks.
+4. Use any code editor you prefer for GDScript files.
 
 ## Local Checks
 
