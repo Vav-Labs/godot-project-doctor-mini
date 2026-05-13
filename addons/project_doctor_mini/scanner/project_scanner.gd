@@ -3,6 +3,12 @@ extends RefCounted
 
 const LARGE_TEXTURE_THRESHOLD := 2048
 const SCENE_NODE_COUNT_THRESHOLD := 250
+const EXCLUDED_DIRECTORIES := ["res://reports"]
+const SEVERITY_ORDER := {
+    "error": 0,
+    "warning": 1,
+    "info": 2
+}
 const RESOURCE_TEXT_EXTENSIONS := ["tscn", "tres", "cfg", "godot", "import"]
 const TEXTURE_EXTENSIONS := ["png", "jpg", "jpeg", "webp"]
 const UNUSED_CANDIDATE_EXTENSIONS := ["png", "jpg", "jpeg", "webp", "wav", "ogg", "mp3", "tres", "res", "tscn", "gdshader"]
@@ -13,6 +19,8 @@ var folders: Array[String] = []
 var referenced_paths: Dictionary = {}
 
 func scan() -> Dictionary:
+    var start_ticks := Time.get_ticks_msec()
+
     findings.clear()
     files.clear()
     folders.clear()
@@ -28,16 +36,21 @@ func scan() -> Dictionary:
     _check_empty_folders()
     _check_unused_files()
     _check_export_presets()
+    _sort_findings()
 
     return {
         "tool": "Godot Project Doctor Mini",
         "generated_at": Time.get_datetime_string_from_system(true),
         "project_root": "res://",
+        "scan_duration_ms": Time.get_ticks_msec() - start_ticks,
         "summary": _build_summary(),
         "findings": findings
     }
 
 func _walk_directory(path: String) -> void:
+    if _is_excluded_directory(path):
+        return
+
     var dir := DirAccess.open(path)
     if dir == null:
         _add_finding("scan_error", "error", path, "Could not open directory.", "Check folder permissions or project state.")
@@ -65,7 +78,10 @@ func _collect_references() -> void:
         if extension != "gd" and not _has_extension(file_path, RESOURCE_TEXT_EXTENSIONS):
             continue
 
-        var text := FileAccess.get_file_as_string(file_path)
+        var text := _read_text_file(file_path)
+        if text == "":
+            continue
+
         for line in text.split("\n"):
             if extension == "gd" and not _is_gdscript_resource_load_line(line):
                 continue
@@ -79,7 +95,10 @@ func _check_missing_scripts() -> void:
         if not _has_extension(file_path, ["tscn", "tres"]):
             continue
 
-        var text := FileAccess.get_file_as_string(file_path)
+        var text := _read_text_file(file_path)
+        if text == "":
+            continue
+
         for line in text.split("\n"):
             if line.contains("type=\"Script\"") and line.contains("path=\"res://"):
                 var script_path := _extract_resource_path(line)
@@ -133,7 +152,10 @@ func _check_scene_node_counts() -> void:
             continue
 
         var node_count := 0
-        var text := FileAccess.get_file_as_string(file_path)
+        var text := _read_text_file(file_path)
+        if text == "":
+            continue
+
         for line in text.split("\n"):
             if line.begins_with("[node "):
                 node_count += 1
@@ -152,7 +174,10 @@ func _check_process_usage() -> void:
         if not _has_extension(file_path, ["gd"]):
             continue
 
-        var text := FileAccess.get_file_as_string(file_path)
+        var text := _read_text_file(file_path)
+        if text == "":
+            continue
+
         for line in text.split("\n"):
             if line.strip_edges().begins_with("func _process("):
                 _add_finding(
@@ -248,3 +273,28 @@ func _is_folder_empty(path: String) -> bool:
         entry = dir.get_next()
     dir.list_dir_end()
     return true
+
+func _is_excluded_directory(path: String) -> bool:
+    return path in EXCLUDED_DIRECTORIES
+
+func _read_text_file(path: String) -> String:
+    var file := FileAccess.open(path, FileAccess.READ)
+    if file == null:
+        return ""
+    return file.get_as_text()
+
+func _sort_findings() -> void:
+    findings.sort_custom(_compare_findings)
+
+func _compare_findings(left: Dictionary, right: Dictionary) -> bool:
+    var left_severity := SEVERITY_ORDER.get(left.get("severity", "info"), 2)
+    var right_severity := SEVERITY_ORDER.get(right.get("severity", "info"), 2)
+    if left_severity != right_severity:
+        return left_severity < right_severity
+
+    var left_path := str(left.get("path", ""))
+    var right_path := str(right.get("path", ""))
+    if left_path != right_path:
+        return left_path < right_path
+
+    return str(left.get("id", "")) < str(right.get("id", ""))

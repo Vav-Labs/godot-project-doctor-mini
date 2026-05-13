@@ -27,6 +27,7 @@ func _build_ui() -> void:
 
     scan_button = Button.new()
     scan_button.text = "Scan Project"
+    scan_button.tooltip_text = "Run the project scan and export Markdown/JSON reports."
     scan_button.pressed.connect(_scan_project)
     add_child(scan_button)
 
@@ -62,7 +63,7 @@ func _scan_project() -> void:
     JsonReportWriter.new().write(report, JSON_REPORT_PATH)
 
     _render_report(report)
-    status_label.text = "Scan complete. Reports exported to reports/."
+    status_label.text = "Scan complete. Reports: %s | %s" % [MARKDOWN_REPORT_PATH, JSON_REPORT_PATH]
     scan_button.disabled = false
 
 func _ensure_reports_dir() -> void:

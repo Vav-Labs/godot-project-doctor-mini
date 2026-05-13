@@ -13,6 +13,7 @@ func write(report: Dictionary, output_path: String) -> void:
     lines.append("")
     lines.append("Generated: %s" % report.get("generated_at", ""))
     lines.append("Project: %s" % report.get("project_root", "res://"))
+    lines.append("Scan Duration: %d ms" % int(report.get("scan_duration_ms", 0)))
     lines.append("")
     lines.append("## Summary")
     lines.append("")
