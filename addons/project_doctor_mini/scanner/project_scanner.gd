@@ -4,6 +4,8 @@ extends RefCounted
 const LARGE_TEXTURE_THRESHOLD := 2048
 const SCENE_NODE_COUNT_THRESHOLD := 250
 const EXCLUDED_DIRECTORIES := ["res://reports"]
+const TOOL_NAME := "Godot Project Doctor Mini"
+const TOOL_VERSION_FALLBACK := "0.1.0"
 const SEVERITY_ORDER := {
     "error": 0,
     "warning": 1,
@@ -38,8 +40,11 @@ func scan() -> Dictionary:
     _check_export_presets()
     _sort_findings()
 
+    var tool_version := _load_tool_version()
+
     return {
-        "tool": "Godot Project Doctor Mini",
+        "tool": TOOL_NAME,
+        "tool_version": tool_version,
         "generated_at": Time.get_datetime_string_from_system(true),
         "project_root": "res://",
         "scan_duration_ms": Time.get_ticks_msec() - start_ticks,
@@ -282,6 +287,14 @@ func _read_text_file(path: String) -> String:
     if file == null:
         return ""
     return file.get_as_text()
+
+func _load_tool_version() -> String:
+    var config := ConfigFile.new()
+    var error := config.load("res://addons/project_doctor_mini/plugin.cfg")
+    if error != OK:
+        return TOOL_VERSION_FALLBACK
+
+    return str(config.get_value("plugin", "version", TOOL_VERSION_FALLBACK))
 
 func _sort_findings() -> void:
     findings.sort_custom(_compare_findings)
