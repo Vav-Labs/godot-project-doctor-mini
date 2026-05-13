@@ -35,8 +35,8 @@ Scan Project
 When clicked, the plugin scans the project and shows a diagnostic summary in the dock. It also exports two report files:
 
 ```text
-project-doctor-report.md
-project-doctor-report.json
+reports/project-doctor-report.md
+reports/project-doctor-report.json
 ```
 
 ## MVP Checks
@@ -213,8 +213,8 @@ The JSON report should be machine-readable for future automation.
 
 ### Phase 4 - Reports
 
-- Generate `project-doctor-report.md`.
-- Generate `project-doctor-report.json`.
+- Generate `reports/project-doctor-report.md`.
+- Generate `reports/project-doctor-report.json`.
 - Show report file paths in the dock after scan.
 
 ### Phase 5 - Polish

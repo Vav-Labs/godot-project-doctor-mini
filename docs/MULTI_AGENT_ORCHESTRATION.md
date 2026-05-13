@@ -267,9 +267,9 @@ Required now:
 
 - `.github/copilot-instructions.md`: repository-specific instructions for Copilot and compatible coding agents.
 - `README.md`: project entrypoint, run/debug notes, and current MVP status.
-- `MULTI_AGENT_ORCHESTRATION.md`: agent roles, workflow modes, policies, and guardrails.
-- `GODOT_PROJECT_DOCTOR_MINI.md`: product/MVP specification for the plugin.
-- `GODOT_VSCODE_AI_MCP_SETUP_PLAN.md`: machine and workspace setup notes.
+- `docs/MULTI_AGENT_ORCHESTRATION.md`: agent roles, workflow modes, policies, and guardrails.
+- `docs/GODOT_PROJECT_DOCTOR_MINI.md`: product/MVP specification for the plugin.
+- `docs/GODOT_VSCODE_AI_MCP_SETUP_PLAN.md`: machine and workspace setup notes.
 
 Recommended when the project grows:
 

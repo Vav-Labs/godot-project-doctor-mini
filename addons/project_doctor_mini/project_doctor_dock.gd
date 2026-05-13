@@ -4,6 +4,9 @@ extends VBoxContainer
 const ProjectScanner = preload("res://addons/project_doctor_mini/scanner/project_scanner.gd")
 const MarkdownReportWriter = preload("res://addons/project_doctor_mini/report/markdown_report_writer.gd")
 const JsonReportWriter = preload("res://addons/project_doctor_mini/report/json_report_writer.gd")
+const REPORTS_DIR := "res://reports"
+const MARKDOWN_REPORT_PATH := REPORTS_DIR + "/project-doctor-report.md"
+const JSON_REPORT_PATH := REPORTS_DIR + "/project-doctor-report.json"
 
 var status_label: Label
 var summary_label: Label
@@ -54,12 +57,16 @@ func _scan_project() -> void:
     var scanner := ProjectScanner.new()
     var report: Dictionary = scanner.scan()
 
-    MarkdownReportWriter.new().write(report, "res://project-doctor-report.md")
-    JsonReportWriter.new().write(report, "res://project-doctor-report.json")
+    _ensure_reports_dir()
+    MarkdownReportWriter.new().write(report, MARKDOWN_REPORT_PATH)
+    JsonReportWriter.new().write(report, JSON_REPORT_PATH)
 
     _render_report(report)
-    status_label.text = "Scan complete. Reports exported to project root."
+    status_label.text = "Scan complete. Reports exported to reports/."
     scan_button.disabled = false
+
+func _ensure_reports_dir() -> void:
+    DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(REPORTS_DIR))
 
 func _render_report(report: Dictionary) -> void:
     var summary: Dictionary = report.get("summary", {})

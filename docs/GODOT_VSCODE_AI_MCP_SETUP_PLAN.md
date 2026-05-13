@@ -185,7 +185,7 @@ godofavacyn.gdshader-lsp,alfish.godot-files
 2. Επιλεχθηκε GDScript-first MVP.
 3. Δημιουργηθηκε plugin skeleton στο `addons/project_doctor_mini/`.
 4. Δημιουργηθηκε Git repo με local commits.
-5. Προστεθηκαν `.gitignore`, `.editorconfig`, `README.md` και orchestration docs.
+5. Προστεθηκαν `.gitignore`, `.editorconfig`, `README.md` και documentation files στο `docs/`.
 
 ### Phase 2 - VS Code integration
 
@@ -240,6 +240,10 @@ Godot_Pr_01/
   .editorconfig
   .github/
     copilot-instructions.md
+  docs/
+    GODOT_PROJECT_DOCTOR_MINI.md
+    GODOT_VSCODE_AI_MCP_SETUP_PLAN.md
+    MULTI_AGENT_ORCHESTRATION.md
   .vscode/
     extensions.json
     settings.json
