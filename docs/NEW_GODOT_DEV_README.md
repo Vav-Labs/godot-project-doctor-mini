@@ -13,13 +13,9 @@ The plugin is called `Godot Project Doctor Mini` and it adds a dock inside the G
 
 ## What To Open
 
-Open the project folder in both:
+Open the project folder in Godot.
 
-- Godot Editor
-- VS Code
-
-The Godot editor is where you use the plugin UI.
-VS Code is where you edit GDScript, run tasks, and inspect reports.
+You can use any code editor for GDScript files. The plugin UI itself is used from inside the Godot editor.
 
 ## Important Difference: Editor Plugin vs Run Project
 
@@ -53,21 +49,21 @@ Inside that dock you should see:
 4. Review the findings list in the dock.
 5. Open the generated files in `reports/`.
 
-## Useful VS Code Tasks
+## Useful Headless Commands
 
-From VS Code you can run:
+From a terminal you can run:
 
-- `Godot: Open Editor`
-- `Godot: Run Project`
-- `Godot: Validate Project Headless`
-- `Godot: Scan Project Headless`
+```text
+godot --headless --path . --quit
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+```
 
 Practical meaning:
 
-- `Godot: Open Editor`: opens the project in Godot.
-- `Godot: Run Project`: runs the main scene, not the editor plugin UI.
-- `Godot: Validate Project Headless`: quick project sanity check.
-- `Godot: Scan Project Headless`: runs the scanner without opening the dock.
+- The first command opens and closes the project as a quick sanity check.
+- The second command runs the scanner without opening the dock.
+- The third command validates the report schema and report writers.
 
 ## Files Worth Knowing First
 
@@ -91,24 +87,17 @@ Check that the plugin is enabled in `Project Settings > Plugins` and that you ar
 
 Run a scan first. The `reports/` folder is created when the scanner writes output.
 
-### VS Code says it cannot connect to GDScript language server
-
-Open the project in Godot first, then run the VS Code command:
-
-`Godot Tools: Start the GDScript Language Server for this workspace`
-
 ## Recommended First Developer Loop
 
 1. Open the project in Godot.
 2. Enable the plugin if needed.
 3. Run one scan from the dock.
 4. Inspect `reports/`.
-5. Edit code in VS Code.
-6. Run `Godot: Validate Project Headless` after changes.
+5. Edit code in your preferred editor.
+6. Run the headless validation command after changes.
 
 ## Next Docs
 
 - [GODOT_PROJECT_DOCTOR_MINI.md](GODOT_PROJECT_DOCTOR_MINI.md)
 - [GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md](GODOT_PROJECT_DOCTOR_MINI_IMPLEMENTATION_PLAN.md)
-- [GODOT_VSCODE_AI_MCP_SETUP_PLAN.md](GODOT_VSCODE_AI_MCP_SETUP_PLAN.md)
-- [MULTI_AGENT_ORCHESTRATION.md](MULTI_AGENT_ORCHESTRATION.md)
+- [TESTING.md](TESTING.md)
