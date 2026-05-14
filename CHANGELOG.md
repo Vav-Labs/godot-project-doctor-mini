@@ -2,13 +2,27 @@
 
 All notable changes to Godot Project Doctor Mini will be documented here.
 
-This project follows a simple release-candidate versioning style while the plugin evolves toward broader public use.
+This project follows simple semantic versioning while the plugin evolves toward broader public use.
 
 ## [Unreleased]
 
 ### Added
 
 - No unreleased changes yet.
+
+## [0.2.2] - 2026-05-14
+
+### Added
+
+- Add addon-local `README.md` and `LICENSE` files for Asset Library packaging.
+- Add `docs/assets/.gdignore` so documentation images are not imported by Godot.
+- Add `.gitattributes` for stable line endings and binary asset handling.
+
+### Changed
+
+- Publish a public-release README status instead of release-candidate wording.
+- Keep the PR comment marker in one generated output shared by the summary script and workflow.
+- Bump the plugin version to `0.2.2`.
 
 ## [0.2.0] - 2026-05-14
 
@@ -38,6 +52,7 @@ This project follows a simple release-candidate versioning style while the plugi
 - Smoke test script for report schema and writer validation.
 - Basic checks for missing scripts, broken resource paths, large textures, scene node count, `_process()` usage, empty folders, possibly unused files, and missing export presets.
 
-[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.1...v0.2.2
 [0.2.0]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/Vav-Labs/godot-project-doctor-mini/releases/tag/v0.1.0

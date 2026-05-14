@@ -59,6 +59,7 @@ def main() -> int:
             "status_title": status_title,
             "summary_markdown": summary_markdown,
             "comment_markdown": comment_markdown,
+            "comment_marker": COMMENT_MARKER,
         }
     )
 
