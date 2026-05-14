@@ -1,6 +1,12 @@
 @tool
 extends RefCounted
 
+const SEVERITY_GROUPS := [
+    {"id": "error", "label": "Errors"},
+    {"id": "warning", "label": "Warnings"},
+    {"id": "info", "label": "Info"}
+]
+
 func write(report: Dictionary, output_path: String) -> bool:
     var file := FileAccess.open(output_path, FileAccess.WRITE)
     if file == null:
@@ -35,23 +41,60 @@ func write(report: Dictionary, output_path: String) -> bool:
     if findings.is_empty():
         lines.append("No findings.")
     else:
-        for finding: Dictionary in findings:
-            lines.append("### %s: %s" % [
-                _sanitize_text(str(finding.get("severity", "info")).capitalize()),
-                _sanitize_text(finding.get("title", "Finding"))
-            ])
+        var grouped_findings := _group_findings_by_severity(findings)
+        for group in SEVERITY_GROUPS:
+            var severity_id := str(group.get("id", "info"))
+            var severity_label := str(group.get("label", severity_id.capitalize()))
+            var severity_findings: Array = grouped_findings.get(severity_id, [])
+            if severity_findings.is_empty():
+                continue
+
+            lines.append("<details open>")
+            lines.append("<summary>%s (%d)</summary>" % [severity_label, severity_findings.size()])
             lines.append("")
-            lines.append("- Path: `%s`" % _sanitize_code(finding.get("path", "")))
-            lines.append("- Check: `%s`" % _sanitize_code(finding.get("id", "unknown")))
-            lines.append("- Message: %s" % _sanitize_text(finding.get("message", "")))
-            lines.append("- Recommendation: %s" % _sanitize_text(finding.get("recommendation", "")))
+            lines.append("| Finding | Path | Check | Message | Recommendation |")
+            lines.append("| --- | --- | --- | --- | --- |")
+            for finding_variant in severity_findings:
+                var finding: Dictionary = finding_variant
+                lines.append("| %s | %s | %s | %s | %s |" % [
+                    _sanitize_table_cell(finding.get("title", "Finding")),
+                    _sanitize_table_cell(finding.get("path", "")),
+                    _sanitize_table_cell(finding.get("id", "unknown")),
+                    _sanitize_table_cell(finding.get("message", "")),
+                    _sanitize_table_cell(finding.get("recommendation", ""))
+                ])
+            lines.append("")
+            lines.append("</details>")
             lines.append("")
 
     file.store_string("\n".join(lines))
     return true
 
-func _sanitize_text(value: Variant) -> String:
-    return str(value).replace("\\", "\\\\").replace("\r\n", " ").replace("\n", " ").replace("|", "\\|").strip_edges()
+func _group_findings_by_severity(findings: Array) -> Dictionary:
+    var grouped := {
+        "error": [],
+        "warning": [],
+        "info": []
+    }
 
-func _sanitize_code(value: Variant) -> String:
-    return _sanitize_text(value).replace("`", "\\`")
+    for finding_variant in findings:
+        if typeof(finding_variant) != TYPE_DICTIONARY:
+            continue
+
+        var finding: Dictionary = finding_variant
+        var severity := str(finding.get("severity", "info"))
+        if not grouped.has(severity):
+            severity = "info"
+        grouped[severity].append(finding)
+
+    return grouped
+
+func _sanitize_text(value: Variant) -> String:
+    return str(value).replace("\\", "\\\\").replace("\r\n", " ").replace("\n", " ").replace("|", "\\|").replace("`", "\\`").strip_edges()
+
+func _sanitize_table_cell(value: Variant) -> String:
+    var text := str(value).strip_edges()
+    if text == "":
+        return "-"
+
+    return text.replace("\\", "\\\\").replace("\r\n", "<br>").replace("\n", "<br>").replace("|", "\\|").replace("`", "\\`").strip_edges()

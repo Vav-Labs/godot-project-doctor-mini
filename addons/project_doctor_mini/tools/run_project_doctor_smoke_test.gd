@@ -7,6 +7,7 @@ const JsonReportWriter = preload("res://addons/project_doctor_mini/report/json_r
 const REPORTS_DIR := "res://reports"
 const MARKDOWN_REPORT_PATH := REPORTS_DIR + "/project-doctor-report.md"
 const JSON_REPORT_PATH := REPORTS_DIR + "/project-doctor-report.json"
+const MARKDOWN_RENDER_CHECK_PATH := REPORTS_DIR + "/project-doctor-markdown-render-check.md"
 const SETTINGS_FILE_PATH := "res://project_doctor_settings.cfg"
 const BASELINE_FILE_PATH := "res://project_doctor_baseline.json"
 const REQUIRED_REPORT_KEYS := [
@@ -63,6 +64,9 @@ func _init() -> void:
         failures.append("Markdown report was not written: %s" % MARKDOWN_REPORT_PATH)
     if not FileAccess.file_exists(JSON_REPORT_PATH):
         failures.append("JSON report was not written: %s" % JSON_REPORT_PATH)
+
+    _validate_markdown_report_contents(report, failures)
+    _validate_markdown_rendering(failures)
 
     if failures.is_empty():
         print("Project Doctor smoke test passed.")
@@ -161,6 +165,112 @@ func _validate_scanner_controls(failures: Array[String]) -> void:
 
     _restore_optional_text(SETTINGS_FILE_PATH, original_settings)
     _restore_optional_text(BASELINE_FILE_PATH, original_baseline)
+
+func _validate_markdown_report_contents(report: Dictionary, failures: Array[String]) -> void:
+    var markdown_text_variant := _read_optional_text(MARKDOWN_REPORT_PATH)
+    if markdown_text_variant == null:
+        failures.append("Markdown report could not be read: %s" % MARKDOWN_REPORT_PATH)
+        return
+
+    var markdown_text := str(markdown_text_variant)
+    if not markdown_text.contains("## Summary"):
+        failures.append("Markdown report is missing the summary section.")
+    if not markdown_text.contains("| Severity | Count |"):
+        failures.append("Markdown report is missing the summary table header.")
+
+    var summary: Dictionary = report.get("summary", {})
+    var severity_groups := [
+        {"key": "errors", "label": "Errors"},
+        {"key": "warnings", "label": "Warnings"},
+        {"key": "info", "label": "Info"}
+    ]
+    for severity_group in severity_groups:
+        var count := int(summary.get(severity_group.get("key", ""), 0))
+        if count <= 0:
+            continue
+
+        var expected_summary := "<summary>%s (%d)</summary>" % [severity_group.get("label", ""), count]
+        if not markdown_text.contains(expected_summary):
+            failures.append("Markdown report is missing the expected severity details summary: %s" % expected_summary)
+
+func _validate_markdown_rendering(failures: Array[String]) -> void:
+    var sample_report := {
+        "tool": "Godot Project Doctor Mini",
+        "tool_version": "0.1.0",
+        "generated_at": "2026-01-01T00:00:00",
+        "project_root": "res://",
+        "scan_duration_ms": 5,
+        "summary": {
+            "errors": 1,
+            "warnings": 1,
+            "info": 1
+        },
+        "findings": [
+            {
+                "id": "info_check",
+                "severity": "info",
+                "title": "Info `Tick`",
+                "path": "res://info|path.gd",
+                "message": "Info line 1\nInfo line 2",
+                "recommendation": "Review `info` usage."
+            },
+            {
+                "id": "broken_resource_path",
+                "severity": "error",
+                "title": "Broken `Resource`",
+                "path": "res://broken|path.gd",
+                "message": "Missing line 1\nMissing line 2",
+                "recommendation": "Fix the `load()` target."
+            },
+            {
+                "id": "large_texture",
+                "severity": "warning",
+                "title": "Large Texture",
+                "path": "res://warning|texture.png",
+                "message": "Too large for review",
+                "recommendation": "Resize before export."
+            }
+        ]
+    }
+
+    if not MarkdownReportWriter.new().write(sample_report, MARKDOWN_RENDER_CHECK_PATH):
+        failures.append("Markdown render check report could not be written.")
+        return
+
+    var markdown_text_variant := _read_optional_text(MARKDOWN_RENDER_CHECK_PATH)
+    if markdown_text_variant == null:
+        failures.append("Markdown render check report could not be read.")
+        return
+
+    var markdown_text := str(markdown_text_variant)
+    if not markdown_text.contains("| Severity | Count |"):
+        failures.append("Markdown render check report is missing the summary table.")
+
+    var expected_summaries := [
+        "<summary>Errors (1)</summary>",
+        "<summary>Warnings (1)</summary>",
+        "<summary>Info (1)</summary>"
+    ]
+    for expected_summary in expected_summaries:
+        if not markdown_text.contains(expected_summary):
+            failures.append("Markdown render check report is missing severity group: %s" % expected_summary)
+
+    var error_index := markdown_text.find(expected_summaries[0])
+    var warning_index := markdown_text.find(expected_summaries[1])
+    var info_index := markdown_text.find(expected_summaries[2])
+    if error_index == -1 or warning_index == -1 or info_index == -1 or not (error_index < warning_index and warning_index < info_index):
+        failures.append("Markdown severity groups are not ordered Error -> Warning -> Info.")
+
+    var details_count := markdown_text.split("<details open>", false).size() - 1
+    if details_count != 3:
+        failures.append("Markdown render check expected 3 collapsible sections, found %d." % details_count)
+
+    if not markdown_text.contains("Broken \\`Resource\\`"):
+        failures.append("Markdown render check did not escape backticks in finding titles.")
+    if not markdown_text.contains("res://broken\\|path.gd"):
+        failures.append("Markdown render check did not escape pipes in table cells.")
+    if not markdown_text.contains("Missing line 1<br>Missing line 2"):
+        failures.append("Markdown render check did not convert multiline text for table cells.")
 
 func _has_finding(findings: Array, finding_id: String, path: String) -> bool:
     for finding_variant in findings:
