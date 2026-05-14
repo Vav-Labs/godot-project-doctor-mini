@@ -17,6 +17,8 @@ The main execution flow is:
 
 The same scan/export path is also available through headless scripts for local validation and CI.
 
+The repository also includes a standalone demo project under `examples/demo_project/` that is intentionally excluded from the root scan and used by a dedicated integration test.
+
 ## Editor Plugin Layer
 
 Main files:
@@ -104,12 +106,18 @@ Main files:
 
 - `addons/project_doctor_mini/tools/run_project_scan.gd`
 - `addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd`
+- `addons/project_doctor_mini/tools/run_project_doctor_scanner_test.gd`
+- `addons/project_doctor_mini/tools/run_project_doctor_integration_test.gd`
+- `addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd`
 
 Responsibilities:
 
 - run the scanner without opening the editor dock,
 - export the same report files as the dock flow,
-- provide repeatable checks for local development and CI.
+- provide repeatable checks for local development and CI,
+- validate deterministic scanner behavior beyond schema/writer smoke coverage,
+- scan the standalone demo project as an integration fixture,
+- emit a lightweight local performance signal.
 
 Typical command shape:
 
@@ -132,7 +140,7 @@ Current top-level shape:
 ```json
 {
   "tool": "Godot Project Doctor Mini",
-  "tool_version": "0.1.0",
+  "tool_version": "0.2.0",
   "generated_at": "2026-05-13T00:00:00",
   "project_root": "res://",
   "scan_duration_ms": 18,
@@ -164,6 +172,7 @@ Each finding keeps a stable shape:
 - Dynamic loads may not always be detected.
 - The scanner remains mostly monolithic for now to keep the MVP easy to reason about.
 - Some docs include illustrative `res://` paths, so scanner reference handling must stay careful to avoid noisy false positives.
+- The demo project and test fixtures are intentionally noisy and must stay excluded from the root repo scan by default.
 
 ## Future Modular Check Structure
 

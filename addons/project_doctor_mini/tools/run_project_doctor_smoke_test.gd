@@ -45,8 +45,8 @@ const EXPECTED_FIXTURE_REFERENCED_RESOURCE := "res://tests/fixtures/scanner/link
 const EXPECTED_FIXTURE_DIRECTORY := "res://tests/fixtures/scanner"
 const EXPECTED_IGNORED_FIXTURE_FINDING_PATH := "res://tests/fixtures/scanner/ignored_area/broken_scene.tscn"
 const EXPECTED_UNUSED_FIXTURE_RESOURCE := "res://tests/fixtures/scanner/unused_probe.tres"
-const DEFAULT_IGNORED_PATH_PATTERNS := ["res://reports", "res://sandbox_screenshot", "res://docs/examples", "res://tests/fixtures/**"]
-const ACTIVE_FIXTURE_SCAN_PATTERNS := ["res://reports", "res://sandbox_screenshot", "res://docs/examples"]
+const DEFAULT_IGNORED_PATH_PATTERNS := ["res://reports", "res://sandbox_screenshot", "res://docs/examples", "res://examples/demo_project/**", "res://tests/fixtures/**"]
+const ACTIVE_FIXTURE_SCAN_PATTERNS := ["res://reports", "res://sandbox_screenshot", "res://docs/examples", "res://examples/demo_project/**"]
 
 func _init() -> void:
     var scanner := ProjectScanner.new()
@@ -186,7 +186,7 @@ func _validate_scanner_controls(failures: Array[String]) -> void:
     var import_baseline_entries := [ {
         "id": "import_settings_unreadable",
         "path": MALFORMED_IMPORT_FIXTURE
-    } ]
+    }]
     var import_baseline_report := _scan_with_settings(ACTIVE_FIXTURE_SCAN_PATTERNS, [], BASELINE_FILE_PATH, false, import_baseline_entries)
     if _has_finding(import_baseline_report.get("findings", []), "import_settings_unreadable", MALFORMED_IMPORT_FIXTURE):
         failures.append("Baseline did not suppress import_settings_unreadable for malformed fixture.")
@@ -251,7 +251,7 @@ func _validate_markdown_report_contents(report: Dictionary, failures: Array[Stri
 func _validate_markdown_rendering(failures: Array[String]) -> void:
     var sample_report := {
         "tool": "Godot Project Doctor Mini",
-        "tool_version": "0.1.0",
+        "tool_version": "0.2.0",
         "generated_at": "2026-01-01T00:00:00",
         "project_root": "res://",
         "scan_duration_ms": 5,

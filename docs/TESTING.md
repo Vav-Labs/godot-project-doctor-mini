@@ -13,6 +13,8 @@ The purpose of this test flow is to verify that:
 - the reusable CI workflow can evaluate scan summaries in different modes,
 - export preset readiness checks stay conservative and deterministic,
 - import settings analysis catches obviously broken `.import` files,
+- the demo project can be scanned as a standalone integration fixture,
+- the benchmark script reports a repeatable timing signal,
 - the report schema stays stable,
 - the generated report files are written to `reports/`,
 - finding control settings stay deterministic,
@@ -27,7 +29,10 @@ Recommended order:
 1. Run `godot --headless --path . --quit`.
 2. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd`.
 3. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd`.
-4. Run `python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode report-only --artifact-name project-doctor-reports`.
+4. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_scanner_test.gd`.
+5. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_integration_test.gd`.
+6. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd`.
+7. Run `python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode report-only --artifact-name project-doctor-reports`.
 
 ## What Each Task Confirms
 
@@ -67,6 +72,31 @@ Confirms that:
 - the generated JSON report can be parsed outside Godot,
 - CI mode evaluation stays deterministic for `report-only`, `warn`, and `fail-on-errors`,
 - GitHub summary/comment markdown can be produced from the JSON report.
+
+### Project Doctor Scanner Regression Test
+
+Confirms that:
+
+- baseline suppression, ignored paths, and ignored finding IDs stay deterministic,
+- broken resource path fixtures still produce the expected finding,
+- export preset and import settings fixtures continue to map to stable finding IDs,
+- experimental unused-file behavior still requires explicit opt-in.
+
+### Project Doctor Demo Integration Test
+
+Confirms that:
+
+- `examples/demo_project/` can be scanned as a standalone Godot project,
+- the temporary plugin-copy flow works in headless mode,
+- expected demo findings such as `missing_script`, `large_texture`, and export readiness warnings remain present.
+
+### Project Doctor Benchmark
+
+Confirms that:
+
+- the scanner can process a deterministic generated fixture set,
+- the benchmark prints file count, duration, and Godot version,
+- generated benchmark files are cleaned up after the run.
 
 ## Finding Control Checks
 
@@ -148,6 +178,13 @@ These are controlled checks for the main finding types.
 3. Confirm Project Doctor reports a focused import-settings warning instead of a generic parse failure only.
 4. Reimport or restore the asset after the check.
 
+### Demo Project Scan
+
+1. Copy `addons/project_doctor_mini/` into `examples/demo_project/addons/project_doctor_mini/`.
+2. Run `godot --headless --path examples/demo_project --script res://addons/project_doctor_mini/tools/run_project_scan.gd`.
+3. Confirm the demo project report includes `missing_script`, `large_texture`, and `export_preset_missing_export_path`.
+4. Remove the copied addon and any generated `examples/demo_project/.godot/` or `examples/demo_project/reports/` folders when finished.
+
 ### Documentation Asset Reference
 
 1. Confirm the README references `docs/assets/project-doctor-dock.png`.
@@ -184,6 +221,12 @@ CI summary helper spot-check:
 3. Confirm the reported status matches the JSON summary counts.
 4. Repeat with `--mode fail-on-errors` after introducing or simulating an error finding if you need to verify failure behavior in CI.
 
+Benchmark spot-check:
+
+1. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd`.
+2. Confirm the output includes the generated file count, total file count, scan duration, and Godot version.
+3. Confirm `tests/generated/` is removed after the benchmark finishes.
+
 Check Markdown:
 
 - title header exists,
@@ -207,6 +250,9 @@ Equivalent headless commands:
 godot --headless --path . --quit
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_scanner_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_integration_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd
 python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode warn --artifact-name project-doctor-reports
 ```
 
@@ -217,6 +263,7 @@ The reusable workflow lives at `.github/workflows/project-doctor.yml`.
 Review points:
 
 - it still runs `godot --headless --path . --quit`,
+- it runs the smoke, scanner, demo integration, benchmark, and standard scan steps,
 - it runs `res://addons/project_doctor_mini/tools/run_project_scan.gd`,
 - it uploads the Markdown and JSON reports as `project-doctor-reports`,
 - it writes a GitHub job summary,
@@ -230,6 +277,9 @@ Phase 5 is in a good state when:
 - headless validation passes,
 - headless scan passes,
 - smoke test passes,
+- scanner regression test passes,
+- demo integration test passes,
+- benchmark command prints a timing signal and cleans up generated files,
 - reports are created in `reports/`,
 - the dock works inside the Godot editor,
 - manual spot-checks are repeatable.

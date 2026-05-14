@@ -39,8 +39,17 @@ jobs:
       - name: Run Project Doctor smoke test
         run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
 
+      - name: Run Project Doctor scanner regression test
+        run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_scanner_test.gd
+
+      - name: Run Project Doctor demo integration test
+        run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_integration_test.gd
+
       - name: Run Project Doctor scan
         run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+
+      - name: Run Project Doctor benchmark
+        run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd
 
       - name: Upload generated reports
         uses: actions/upload-artifact@v4

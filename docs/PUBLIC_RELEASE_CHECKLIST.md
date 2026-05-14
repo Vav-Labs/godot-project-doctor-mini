@@ -1,6 +1,6 @@
 # Public Release Checklist
 
-Checklist for preparing `Vav-Labs/godot-project-doctor-mini` for a clean public MVP release.
+Checklist for preparing `Vav-Labs/godot-project-doctor-mini` for the `0.2.0` public release candidate.
 
 ## Repository About
 
@@ -28,7 +28,10 @@ Already recommended:
 - `CONTRIBUTING.md`
 - `CHANGELOG.md`
 - `.github/workflows/smoke-test.yml`
+- `.github/workflows/project-doctor.yml`
 - `docs/TESTING.md`
+- `docs/ARCHITECTURE.md`
+- `examples/demo_project/`
 - `docs/NEW_GODOT_DEV_README.md`
 
 ## AI Agent / Planning Scratch Files
@@ -90,47 +93,59 @@ Run before tagging:
 ```text
 godot --headless --path . --quit
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_scanner_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_integration_test.gd
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd
+python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode warn --artifact-name project-doctor-reports
 ```
 
-Expected MVP result:
+Expected root project result:
 
 ```text
 Project Doctor smoke test passed.
+Project Doctor scanner test passed.
+Project Doctor integration test passed.
 Project Doctor scan complete: 0 errors, 1 warnings, 0 info
+Project Doctor benchmark complete: 500 generated files, 588 total files scanned, about 696 ms, Godot 4.6.2
 ```
 
 The missing export presets warning is expected until `export_presets.cfg` exists.
+
+The demo project is intentionally excluded from the root scan so its sample issues only appear in the dedicated integration test.
 
 ## First Release Tag
 
 After committing and pushing the public-ready files:
 
 ```text
-git tag -a v0.1.0 -m "Release v0.1.0"
-git push origin v0.1.0
+git tag -a v0.2.0 -m "Release v0.2.0"
+git push origin v0.2.0
 ```
 
-Then create a GitHub release from the tag using the `CHANGELOG.md` `0.1.0` notes.
+Then create a GitHub release from the tag using the `CHANGELOG.md` `0.2.0` notes.
 
 ## Suggested Release Title
 
 ```text
-Godot Project Doctor Mini v0.1.0
+Godot Project Doctor Mini v0.2.0
 ```
 
 ## Suggested Release Summary
 
 ```text
-First MVP release of Godot Project Doctor Mini: a Godot 4 editor plugin that scans a project and generates Markdown/JSON diagnostic reports.
+Public release candidate for Godot Project Doctor Mini: a Godot 4 editor plugin with shared settings, CI automation, export/import readiness checks, a standalone demo project, integration coverage, and a benchmark path.
 ```
 
 ## Before Marking The Repo Ready
 
 - README badge is visible.
 - GitHub Actions smoke test is green.
+- Reusable Project Doctor workflow is green.
 - License appears in GitHub sidebar.
 - Topics appear in GitHub sidebar.
 - Screenshot is added or README clearly says it is coming soon.
-- `CHANGELOG.md` has `0.1.0`.
-- Release tag `v0.1.0` exists.
+- Demo project README explains the expected findings.
+- Benchmark note in README matches a real measured run.
+- `CHANGELOG.md` has `0.2.0`.
+- Release tag `v0.2.0` exists.

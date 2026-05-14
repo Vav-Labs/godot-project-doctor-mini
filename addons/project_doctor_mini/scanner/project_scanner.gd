@@ -8,7 +8,7 @@ const ImportSettingsCheck = preload("res://addons/project_doctor_mini/scanner/ch
 const SETTINGS_FILE_PATH := "res://project_doctor_settings.cfg"
 const DEFAULT_LARGE_TEXTURE_THRESHOLD := 2048
 const DEFAULT_SCENE_NODE_COUNT_THRESHOLD := 250
-const DEFAULT_IGNORED_PATH_PATTERNS := ["res://reports", "res://sandbox_screenshot", "res://docs/examples", "res://tests/fixtures/**"]
+const DEFAULT_IGNORED_PATH_PATTERNS := ["res://reports", "res://sandbox_screenshot", "res://docs/examples", "res://examples/demo_project/**", "res://tests/fixtures/**"]
 const DEFAULT_IGNORED_FINDINGS := []
 const DEFAULT_BASELINE_FILE := "res://project_doctor_baseline.json"
 const DEFAULT_ENABLE_EXPERIMENTAL_UNUSED_FILES := false
@@ -21,7 +21,7 @@ const LEGACY_IGNORED_FINDINGS_SETTING := "project_doctor_mini/ignored_findings"
 const BASELINE_FILE_SETTING := "project_doctor_mini/baseline_file"
 const EXPERIMENTAL_UNUSED_FILES_SETTING := "project_doctor_mini/enable_experimental_unused_files"
 const TOOL_NAME := "Godot Project Doctor Mini"
-const TOOL_VERSION_FALLBACK := "0.1.0"
+const TOOL_VERSION_FALLBACK := "0.2.0"
 const SEVERITY_ORDER := {
 	"error": 0,
 	"warning": 1,

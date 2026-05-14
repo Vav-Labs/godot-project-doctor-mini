@@ -27,8 +27,20 @@ obj/
 # VS Code local state
 .vscode/.ropeproject/
 
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
 # Project Doctor generated reports
 reports/
+tests/generated/
+
+# Demo project generated state
+examples/demo_project/.godot/
+examples/demo_project/reports/
+examples/demo_project/addons/project_doctor_mini/
 
 # Local screenshot sandbox
 sandbox_screenshot/
