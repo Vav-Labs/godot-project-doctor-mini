@@ -11,6 +11,8 @@ The purpose of this test flow is to verify that:
 - the dock settings panel can save and reload shared scanner settings,
 - the headless scan works,
 - the reusable CI workflow can evaluate scan summaries in different modes,
+- export preset readiness checks stay conservative and deterministic,
+- import settings analysis catches obviously broken `.import` files,
 - the report schema stays stable,
 - the generated report files are written to `reports/`,
 - finding control settings stay deterministic,
@@ -54,6 +56,8 @@ Confirms that:
 - Markdown reports keep the summary table and ordered collapsible severity groups,
 - markdown example docs do not produce broken-resource false positives,
 - ignore patterns, ignored finding IDs, and baseline entries suppress findings deterministically,
+- missing and malformed export preset files are handled conservatively,
+- malformed and suspicious `.import` fixtures produce stable findings,
 - experimental unused-file behavior stays opt-in.
 
 ### Project Doctor CI Summary Helper
@@ -130,6 +134,20 @@ These are controlled checks for the main finding types.
 3. Confirm the export presets warning appears.
 4. Restore the file.
 
+### Export Preset Readiness
+
+1. Create or edit a preset in `export_presets.cfg` with an obvious missing field such as an empty export path.
+2. Run a scan.
+3. Confirm the finding mentions the affected preset/platform in the message.
+4. Restore a valid preset entry after the check.
+
+### Import Settings Analysis
+
+1. Temporarily break a `.import` file in a test area or create one that references a missing source asset.
+2. Run a scan.
+3. Confirm Project Doctor reports a focused import-settings warning instead of a generic parse failure only.
+4. Reimport or restore the asset after the check.
+
 ### Documentation Asset Reference
 
 1. Confirm the README references `docs/assets/project-doctor-dock.png`.
@@ -174,6 +192,12 @@ Check Markdown:
 - findings are grouped in `Errors`, `Warnings`, then `Info`,
 - groups render as collapsible `<details>` sections,
 - table cells stay readable when text contains pipes, newlines, or backticks.
+
+Check export/import readiness findings when relevant:
+
+- export preset findings mention the affected platform or preset,
+- import settings findings recommend reimporting or repairing the asset metadata,
+- large texture import warnings are distinct from the base `large_texture` size warning.
 
 ## Command-Line Shape
 

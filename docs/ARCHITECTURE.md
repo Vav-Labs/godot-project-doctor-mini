@@ -74,6 +74,14 @@ scan() -> Dictionary
 
 This keeps the external contract simple while allowing future extraction of checks into smaller modules.
 
+Current extracted check modules include:
+
+- `scanner/checks/process_usage_check.gd`
+- `scanner/checks/export_presets_check.gd`
+- `scanner/checks/import_settings_check.gd`
+
+The export preset check parses `export_presets.cfg` conservatively and only flags obvious readiness gaps. The import settings check parses `.import` files and focuses on parse failures, missing references, missing generated targets, and a small set of texture-import risks.
+
 ## Report Writers
 
 Main files:
@@ -168,6 +176,7 @@ addons/project_doctor_mini/scanner/
   project_scanner.gd
   checks/
     export_presets_check.gd
+    import_settings_check.gd
     process_usage_check.gd
     scene_node_count_check.gd
 ```

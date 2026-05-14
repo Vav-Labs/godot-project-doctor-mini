@@ -43,7 +43,8 @@ Current preview asset showing the dock layout and primary controls.
 | Scripts using `_process()` | Info | Marks scripts with per-frame work for manual review. |
 | Empty folders | Info | Helps keep the project tree tidy. |
 | Possibly unused files | Info | Experimental check for files not referenced by scanned text resources. Disabled by default. |
-| Missing export presets | Warning | Reminds you to create export presets before release builds. |
+| Export preset readiness | Warning | Detects missing export presets and obvious preset readiness gaps such as missing platform, name, or export path. |
+| Import settings issues | Warning | Flags unreadable `.import` files, missing source references, missing generated targets, and large textures left in raw import mode. |
 
 ## Requirements
 
@@ -193,6 +194,15 @@ Each finding includes:
 
 The Markdown report keeps the top-level metadata near the top, includes a severity summary table, and groups findings into GitHub-friendly collapsible `<details>` sections in `Error`, `Warning`, then `Info` order.
 
+## Export And Import Readiness
+
+Project Doctor now performs two conservative release-readiness passes beyond general hygiene:
+
+- `export_presets.cfg` is parsed when present so the scanner can flag presets that are missing obvious readiness fields such as platform, name, or export path.
+- `.import` files are parsed with `ConfigFile` so the scanner can flag unreadable import metadata, missing source references, missing generated targets, and large texture imports that still use raw `compress/mode=0` settings.
+
+These checks stay intentionally conservative. They focus on obvious issues that are safe to review in CI and should not be treated as a full export-template or importer validator.
+
 If you want to see sample output without running Godot first, open:
 
 - [docs/examples/project-doctor-report.md](docs/examples/project-doctor-report.md)
@@ -239,6 +249,8 @@ See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
 - Dynamic resource loads may not always be detected.
 - `Possibly unused file` is experimental, disabled by default, and must be manually reviewed before deleting files.
 - The current scanner uses simple text/resource checks, not a full Godot dependency graph.
+- Export readiness checks only validate obvious preset fields that are clearly present in `export_presets.cfg`.
+- Import settings analysis is conservative and currently focuses on parse failures, missing references, and a small set of texture import risks.
 - The plugin is editor-only and does not appear in the running game window.
 
 ## Roadmap

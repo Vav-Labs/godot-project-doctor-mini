@@ -4,12 +4,20 @@ extends SceneTree
 const ProjectScanner = preload("res://addons/project_doctor_mini/scanner/project_scanner.gd")
 const MarkdownReportWriter = preload("res://addons/project_doctor_mini/report/markdown_report_writer.gd")
 const JsonReportWriter = preload("res://addons/project_doctor_mini/report/json_report_writer.gd")
+const ExportPresetsCheck = preload("res://addons/project_doctor_mini/scanner/checks/export_presets_check.gd")
+const ImportSettingsCheck = preload("res://addons/project_doctor_mini/scanner/checks/import_settings_check.gd")
 const REPORTS_DIR := "res://reports"
 const MARKDOWN_REPORT_PATH := REPORTS_DIR + "/project-doctor-report.md"
 const JSON_REPORT_PATH := REPORTS_DIR + "/project-doctor-report.json"
 const MARKDOWN_RENDER_CHECK_PATH := REPORTS_DIR + "/project-doctor-markdown-render-check.md"
 const SETTINGS_FILE_PATH := "res://project_doctor_settings.cfg"
 const BASELINE_FILE_PATH := "res://project_doctor_baseline.json"
+const MISSING_EXPORT_PRESETS_FIXTURE := "res://tests/fixtures/scanner/export/missing_export_presets.cfg"
+const INVALID_EXPORT_PRESET_FIXTURE := "res://tests/fixtures/scanner/export/invalid_export_presets.cfg"
+const INCOMPLETE_EXPORT_PRESET_FIXTURE := "res://tests/fixtures/scanner/export/incomplete_export_presets.cfg"
+const VALID_EXPORT_PRESET_FIXTURE := "res://tests/fixtures/scanner/export/valid_export_presets.cfg"
+const MALFORMED_IMPORT_FIXTURE := "res://tests/fixtures/scanner/imports/malformed_texture.png.import"
+const MISSING_SOURCE_IMPORT_FIXTURE := "res://tests/fixtures/scanner/imports/missing_source_texture.png.import"
 const REQUIRED_REPORT_KEYS := [
     "tool",
     "tool_version",
@@ -48,6 +56,7 @@ func _init() -> void:
     _validate_report(report, failures)
     _validate_scanner_behavior(report, failures)
     _validate_scanner_controls(failures)
+    _validate_export_and_import_checks(failures)
 
     var dir_error := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(REPORTS_DIR))
     if dir_error != OK:
@@ -128,6 +137,9 @@ func _validate_scanner_behavior(report: Dictionary, failures: Array[String]) -> 
     if _has_finding(findings, "possibly_unused_file", EXPECTED_UNUSED_FIXTURE_RESOURCE):
         failures.append("Unused-file detection should be disabled by default: %s" % EXPECTED_UNUSED_FIXTURE_RESOURCE)
 
+    if not _has_finding(findings, "export_presets_missing", "res://export_presets.cfg"):
+        failures.append("Default project scan should still report export_presets_missing when export_presets.cfg is absent.")
+
 func _validate_scanner_controls(failures: Array[String]) -> void:
     var original_settings := _read_optional_text(SETTINGS_FILE_PATH)
     var original_baseline := _read_optional_text(BASELINE_FILE_PATH)
@@ -163,8 +175,51 @@ func _validate_scanner_controls(failures: Array[String]) -> void:
     elif not _finding_message_contains(experimental_unused_report.get("findings", []), "possibly_unused_file", EXPECTED_UNUSED_FIXTURE_RESOURCE, "Experimental check"):
         failures.append("Experimental unused-file finding is missing the expected advisory wording.")
 
+    var import_fixture_report := _scan_with_settings(ACTIVE_FIXTURE_SCAN_PATTERNS, [], "", false)
+    if not _has_finding(import_fixture_report.get("findings", []), "import_settings_unreadable", MALFORMED_IMPORT_FIXTURE):
+        failures.append("Malformed import fixture was not reported through the scanner: %s" % MALFORMED_IMPORT_FIXTURE)
+
+    var ignored_import_report := _scan_with_settings(ACTIVE_FIXTURE_SCAN_PATTERNS + ["res://tests/fixtures/scanner/imports/**"], [], "", false)
+    if _has_finding(ignored_import_report.get("findings", []), "import_settings_unreadable", MALFORMED_IMPORT_FIXTURE):
+        failures.append("Ignored import fixture path still produced finding: %s" % MALFORMED_IMPORT_FIXTURE)
+
+    var import_baseline_entries := [ {
+        "id": "import_settings_unreadable",
+        "path": MALFORMED_IMPORT_FIXTURE
+    } ]
+    var import_baseline_report := _scan_with_settings(ACTIVE_FIXTURE_SCAN_PATTERNS, [], BASELINE_FILE_PATH, false, import_baseline_entries)
+    if _has_finding(import_baseline_report.get("findings", []), "import_settings_unreadable", MALFORMED_IMPORT_FIXTURE):
+        failures.append("Baseline did not suppress import_settings_unreadable for malformed fixture.")
+
     _restore_optional_text(SETTINGS_FILE_PATH, original_settings)
     _restore_optional_text(BASELINE_FILE_PATH, original_baseline)
+
+func _validate_export_and_import_checks(failures: Array[String]) -> void:
+    var missing_export_findings := ExportPresetsCheck.new().run(MISSING_EXPORT_PRESETS_FIXTURE)
+    if not _has_finding(missing_export_findings, "export_presets_missing", MISSING_EXPORT_PRESETS_FIXTURE):
+        failures.append("Missing export presets fixture did not report export_presets_missing.")
+
+    var invalid_export_findings := ExportPresetsCheck.new().run(INVALID_EXPORT_PRESET_FIXTURE)
+    if not _has_finding(invalid_export_findings, "export_presets_unreadable", INVALID_EXPORT_PRESET_FIXTURE):
+        failures.append("Invalid export presets fixture did not report export_presets_unreadable.")
+
+    var incomplete_export_findings := ExportPresetsCheck.new().run(INCOMPLETE_EXPORT_PRESET_FIXTURE)
+    if not _has_finding(incomplete_export_findings, "export_preset_missing_export_path", INCOMPLETE_EXPORT_PRESET_FIXTURE):
+        failures.append("Incomplete export preset fixture did not report export_preset_missing_export_path.")
+    elif not _finding_message_contains(incomplete_export_findings, "export_preset_missing_export_path", INCOMPLETE_EXPORT_PRESET_FIXTURE, "Android"):
+        failures.append("Incomplete export preset finding did not mention the affected platform/preset.")
+
+    var valid_export_findings := ExportPresetsCheck.new().run(VALID_EXPORT_PRESET_FIXTURE)
+    if not valid_export_findings.is_empty():
+        failures.append("Valid export preset fixture produced noisy findings.")
+
+    var malformed_import_findings := ImportSettingsCheck.new().run([MALFORMED_IMPORT_FIXTURE], 2048)
+    if not _has_finding(malformed_import_findings, "import_settings_unreadable", MALFORMED_IMPORT_FIXTURE):
+        failures.append("Malformed import fixture did not report import_settings_unreadable.")
+
+    var missing_source_import_findings := ImportSettingsCheck.new().run([MISSING_SOURCE_IMPORT_FIXTURE], 2048)
+    if not _has_finding(missing_source_import_findings, "import_settings_missing_source_file", MISSING_SOURCE_IMPORT_FIXTURE):
+        failures.append("Missing-source import fixture did not report import_settings_missing_source_file.")
 
 func _validate_markdown_report_contents(report: Dictionary, failures: Array[String]) -> void:
     var markdown_text_variant := _read_optional_text(MARKDOWN_REPORT_PATH)
