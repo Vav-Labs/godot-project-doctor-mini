@@ -20,7 +20,7 @@ This is a good compact plugin project because it touches practical Godot editor 
 - Headless execution for local checks or CI
 - Possible C# expansion later
 
-## MVP Goal
+## Implemented Goal
 
 Create a Godot editor dock with one main button:
 
@@ -35,7 +35,7 @@ reports/project-doctor-report.md
 reports/project-doctor-report.json
 ```
 
-## MVP Checks
+## Core Checks
 
 | Check | Why It Is Useful |
 | --- | --- |
@@ -85,9 +85,9 @@ addons/
       json_report_writer.gd
 ```
 
-## Dock UI Draft
+## Dock UI Shape
 
-The editor dock should stay simple for MVP.
+The editor dock should stay simple and focused.
 
 ```text
 Godot Project Doctor Mini
@@ -188,7 +188,7 @@ The JSON report should be machine-readable for future automation.
 - Create `EditorPlugin` script.
 - Add a dock panel to the Godot editor.
 - Add `Scan Project` button.
-- Show placeholder scan output.
+- Show initial scan output.
 
 ### Phase 2 - Scanner Core
 
@@ -196,7 +196,7 @@ The JSON report should be machine-readable for future automation.
 - Collect `.tscn`, `.gd`, `.png`, `.jpg`, `.jpeg`, `.webp`, `.tres`, `.res`, and config files.
 - Return findings using one common data model.
 
-### Phase 3 - MVP Checks
+### Phase 3 - Core Checks
 
 - Missing scripts.
 - Broken resource paths.
@@ -223,7 +223,7 @@ The JSON report should be machine-readable for future automation.
 
 ## Testing Plan
 
-Manual MVP tests:
+Manual validation checks:
 
 - Enable plugin in Godot Project Settings.
 - Open dock and click `Scan Project`.

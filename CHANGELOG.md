@@ -2,7 +2,7 @@
 
 All notable changes to Godot Project Doctor Mini will be documented here.
 
-This project follows a simple MVP-friendly versioning style until the plugin is ready for broader release.
+This project follows a simple release-candidate versioning style while the plugin evolves toward broader public use.
 
 ## [Unreleased]
 

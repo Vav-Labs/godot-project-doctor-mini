@@ -1,6 +1,6 @@
 # Feature Roadmap
 
-Focused plan for the next Project Doctor Mini features after the public MVP.
+Focused plan for the next Project Doctor Mini features after the initial public release.
 
 ## Goal
 
