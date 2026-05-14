@@ -25,13 +25,21 @@ const REQUIRED_FINDING_KEYS := [
     "recommendation"
 ]
 const ALLOWED_SEVERITIES := ["error", "warning", "info"]
+const EXPECTED_FAKE_DOC_PATHS := [
+    "res://assets/textures/example.png",
+    "res://export_presets.cfg",
+    "res://tests/fixtures/scanner/missing_from_code_block.png"
+]
+const EXPECTED_FIXTURE_REFERENCED_RESOURCE := "res://tests/fixtures/scanner/linked_data.tres"
+const EXPECTED_FIXTURE_DIRECTORY := "res://tests/fixtures/scanner"
 
-func _initialize() -> void:
+func _init() -> void:
     var scanner := ProjectScanner.new()
     var report: Dictionary = scanner.scan()
     var failures: Array[String] = []
 
     _validate_report(report, failures)
+    _validate_scanner_behavior(report, failures)
 
     var dir_error := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(REPORTS_DIR))
     if dir_error != OK:
@@ -98,3 +106,27 @@ func _validate_report(report: Dictionary, failures: Array[String]) -> void:
 func _is_number(value: Variant) -> bool:
     var value_type := typeof(value)
     return value_type == TYPE_INT or value_type == TYPE_FLOAT
+
+func _validate_scanner_behavior(report: Dictionary, failures: Array[String]) -> void:
+    var findings: Array = report.get("findings", [])
+
+    for fake_path in EXPECTED_FAKE_DOC_PATHS:
+        if _has_finding(findings, "broken_resource_path", fake_path):
+            failures.append("False positive broken_resource_path detected for example content: %s" % fake_path)
+
+    if _has_finding(findings, "possibly_unused_file", EXPECTED_FIXTURE_REFERENCED_RESOURCE):
+        failures.append("Markdown-linked fixture resource was reported as unused: %s" % EXPECTED_FIXTURE_REFERENCED_RESOURCE)
+
+    if _has_finding(findings, "broken_resource_path", EXPECTED_FIXTURE_DIRECTORY):
+        failures.append("Existing fixture directory was reported as broken: %s" % EXPECTED_FIXTURE_DIRECTORY)
+
+func _has_finding(findings: Array, finding_id: String, path: String) -> bool:
+    for finding_variant in findings:
+        if typeof(finding_variant) != TYPE_DICTIONARY:
+            continue
+
+        var finding: Dictionary = finding_variant
+        if str(finding.get("id", "")) == finding_id and str(finding.get("path", "")) == path:
+            return true
+
+    return false
