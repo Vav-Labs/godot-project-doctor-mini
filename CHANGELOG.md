@@ -10,6 +10,13 @@ This project follows simple semantic versioning while the plugin evolves toward 
 
 - No unreleased changes yet.
 
+## [0.2.4] - 2026-05-14
+
+### Changed
+
+- Bump the Asset Library submission plugin version to `0.2.4`.
+- Confirm the stable PR comment marker is `<!-- godot-project-doctor-mini -->`.
+
 ## [0.2.3] - 2026-05-14
 
 ### Changed
@@ -59,7 +66,8 @@ This project follows simple semantic versioning while the plugin evolves toward 
 - Smoke test script for report schema and writer validation.
 - Basic checks for missing scripts, broken resource paths, large textures, scene node count, `_process()` usage, empty folders, possibly unused files, and missing export presets.
 
-[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.1...v0.2.2
 [0.2.0]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.1.0...v0.2.0
