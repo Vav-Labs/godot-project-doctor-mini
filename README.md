@@ -17,11 +17,14 @@ This project is an early MVP. It is usable for local project checks, but the sca
 
 - Godot editor dock named `Project Doctor`
 - One-click project scan
+- Compact dock settings panel for thresholds, ignore patterns, baseline path, and experimental checks
 - Markdown and JSON report output
+- Direct buttons to open the generated Markdown and JSON reports
 - Headless scan script for local automation or CI
 - Severity summary for errors, warnings, and info findings
 - Severity filters in the editor dock
 - Button to open the generated reports folder
+- GitHub-friendly Markdown reports with grouped collapsible severity sections
 
 ## Preview
 
@@ -65,10 +68,12 @@ To try it in this repository, open this project in Godot and enable the plugin f
 The Project Doctor UI appears inside the Godot editor. It does not appear in the running game window.
 
 1. Open the `Project Doctor` dock.
-2. Click `Scan Project`.
-3. Review the summary and findings list.
-4. Use the severity filters if needed.
-5. Open the generated reports from `reports/`.
+2. Expand `Settings` if you want to adjust thresholds, ignore patterns, baseline path, or the experimental unused-file check.
+3. Click `Save Settings` to persist shared scan settings to `project_doctor_settings.cfg`.
+4. Click `Scan Project`.
+5. Review the summary and findings list.
+6. Use the severity filters if needed.
+7. Open the generated reports from `reports/`, or use the direct `Open Markdown Report` / `Open JSON Report` buttons.
 
 Each scan writes:
 
@@ -92,6 +97,8 @@ Supported controls:
 Baseline entries match by `id` and `path`, with optional `message` for stricter matching. Accepted findings are removed before report summaries are built, so counts match the visible findings.
 
 The default config keeps `possibly_unused_file` disabled because it is still experimental and should not block CI by default.
+
+The dock settings panel writes the same `project_doctor_settings.cfg` file used by headless scans, so common scanner settings no longer require source edits.
 
 ## Headless Scan
 
@@ -142,6 +149,8 @@ Each finding includes:
 }
 ```
 
+The Markdown report keeps the top-level metadata near the top, includes a severity summary table, and groups findings into GitHub-friendly collapsible `<details>` sections in `Error`, `Warning`, then `Info` order.
+
 If you want to see sample output without running Godot first, open:
 
 - [docs/examples/project-doctor-report.md](docs/examples/project-doctor-report.md)
@@ -187,7 +196,6 @@ See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
 - Dynamic resource loads may not always be detected.
 - `Possibly unused file` is experimental, disabled by default, and must be manually reviewed before deleting files.
 - The current scanner uses simple text/resource checks, not a full Godot dependency graph.
-- Settings currently live in `project_doctor_settings.cfg`; there is no dedicated editor settings UI yet.
 - The plugin is editor-only and does not appear in the running game window.
 
 ## Roadmap
