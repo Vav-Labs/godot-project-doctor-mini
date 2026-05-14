@@ -1,0 +1,211 @@
+name: Project Doctor
+
+on:
+  workflow_call:
+    inputs:
+      godot-version:
+        description: "Godot version to install on the runner."
+        required: false
+        type: string
+        default: 4.6.2
+      mode:
+        description: "CI behavior for normal findings. Supported values: report-only, warn, fail-on-errors."
+        required: false
+        type: string
+        default: report-only
+      comment-on-pr:
+        description: "Post or update a compact PR comment when pull request context is available."
+        required: false
+        type: boolean
+        default: false
+      artifact-name:
+        description: "Artifact name for the generated Markdown and JSON reports."
+        required: false
+        type: string
+        default: project-doctor-reports
+    outputs:
+      errors:
+        description: Number of error findings in the JSON report summary.
+        value: ${{ jobs.project_doctor.outputs.errors }}
+      warnings:
+        description: Number of warning findings in the JSON report summary.
+        value: ${{ jobs.project_doctor.outputs.warnings }}
+      info:
+        description: Number of info findings in the JSON report summary.
+        value: ${{ jobs.project_doctor.outputs.info }}
+      scan_duration_ms:
+        description: Scan duration reported by the generated JSON report.
+        value: ${{ jobs.project_doctor.outputs.scan_duration_ms }}
+      mode_status:
+        description: Evaluated CI status for the selected mode.
+        value: ${{ jobs.project_doctor.outputs.mode_status }}
+  workflow_dispatch:
+    inputs:
+      godot-version:
+        description: "Godot version to install on the runner."
+        required: false
+        type: string
+        default: 4.6.2
+      mode:
+        description: "CI behavior for normal findings. Supported values: report-only, warn, fail-on-errors."
+        required: false
+        type: choice
+        options:
+          - report-only
+          - warn
+          - fail-on-errors
+        default: report-only
+      comment-on-pr:
+        description: "Post or update a compact PR comment when pull request context is available."
+        required: false
+        type: boolean
+        default: false
+      artifact-name:
+        description: "Artifact name for the generated Markdown and JSON reports."
+        required: false
+        type: string
+        default: project-doctor-reports
+
+permissions:
+  contents: read
+
+jobs:
+  project_doctor:
+    name: Project Doctor Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      errors: ${{ steps.parse.outputs.errors }}
+      warnings: ${{ steps.parse.outputs.warnings }}
+      info: ${{ steps.parse.outputs.info }}
+      scan_duration_ms: ${{ steps.parse.outputs.scan_duration_ms }}
+      mode_status: ${{ steps.parse.outputs.mode_status }}
+      should_fail: ${{ steps.parse.outputs.should_fail }}
+      summary_markdown: ${{ steps.parse.outputs.summary_markdown }}
+      comment_markdown: ${{ steps.parse.outputs.comment_markdown }}
+      status_title: ${{ steps.parse.outputs.status_title }}
+      total_findings: ${{ steps.parse.outputs.total_findings }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: ${{ inputs['godot-version'] }}
+          use-dotnet: true
+          include-templates: false
+
+      - name: Verify Godot
+        run: godot --version
+
+      - name: Validate project opens headlessly
+        run: godot --headless --path . --quit
+
+      - name: Run Project Doctor scan
+        run: godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
+
+      - name: Upload Project Doctor reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs['artifact-name'] }}
+          path: |
+            reports/project-doctor-report.md
+            reports/project-doctor-report.json
+          if-no-files-found: error
+
+      - name: Parse Project Doctor report
+        id: parse
+        if: ${{ success() }}
+        run: >-
+          python3 .github/scripts/project_doctor_summary.py
+          --report reports/project-doctor-report.json
+          --mode "${{ inputs.mode }}"
+          --artifact-name "${{ inputs['artifact-name'] }}"
+
+      - name: Emit Project Doctor annotations
+        if: ${{ success() }}
+        shell: bash
+        run: |
+          if [ "${{ inputs.mode }}" = "warn" ] && [ "${{ steps.parse.outputs.total_findings }}" != "0" ]; then
+            echo "::warning title=Project Doctor::${{ steps.parse.outputs.status_title }}"
+          elif [ "${{ inputs.mode }}" = "report-only" ]; then
+            echo "::notice title=Project Doctor::${{ steps.parse.outputs.status_title }}"
+          fi
+
+      - name: Add Project Doctor job summary
+        if: ${{ success() }}
+        shell: bash
+        run: |
+          printf '%s\n' "${{ steps.parse.outputs.summary_markdown }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Enforce Project Doctor CI mode
+        if: ${{ success() && steps.parse.outputs.should_fail == 'true' }}
+        shell: bash
+        run: |
+          echo "Project Doctor CI mode failure: ${{ steps.parse.outputs.status_title }}" >&2
+          exit 1
+
+  comment_on_pr:
+    name: Project Doctor PR Comment
+    runs-on: ubuntu-latest
+    needs: project_doctor
+    if: ${{ needs.project_doctor.result == 'success' && inputs['comment-on-pr'] && github.event.pull_request.number }}
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Upsert Project Doctor PR comment
+        uses: actions/github-script@v7
+        env:
+          PROJECT_DOCTOR_COMMENT: ${{ needs.project_doctor.outputs.comment_markdown }}
+        with:
+          script: |
+            const marker = '<!-- project-doctor-mini-report -->';
+            const issueNumber = context.payload.pull_request?.number;
+
+            if (!issueNumber) {
+              core.info('No pull request context available; skipping comment.');
+              return;
+            }
+
+            const body = process.env.PROJECT_DOCTOR_COMMENT;
+            if (!body || !body.includes(marker)) {
+              core.setFailed('Project Doctor comment body is missing the stable marker.');
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: issueNumber,
+              per_page: 100
+            });
+
+            const existingComment = comments.find((comment) =>
+              comment.user?.type === 'Bot' && comment.body?.includes(marker)
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existingComment.id,
+                body
+              });
+              core.info(`Updated Project Doctor comment: ${existingComment.id}`);
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body
+            });
+            core.info('Created Project Doctor PR comment.');

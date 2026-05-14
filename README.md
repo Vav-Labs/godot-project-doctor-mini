@@ -116,6 +116,48 @@ The smoke test validates the report schema and confirms that the report writers 
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
 ```
 
+## CI
+
+This repository now includes a reusable GitHub Actions entrypoint at `.github/workflows/project-doctor.yml` for headless validation plus report generation.
+
+Minimal caller workflow:
+
+```yaml
+name: Project Doctor
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  project-doctor:
+    uses: Vav-Labs/godot-project-doctor-mini/.github/workflows/project-doctor.yml@master
+    with:
+      mode: warn
+      comment-on-pr: true
+```
+
+Available modes:
+
+- `report-only`: always publish reports unless the tool itself fails.
+- `warn`: keep the job green, but emit a warning annotation when findings exist.
+- `fail-on-errors`: fail the job only when `summary.errors > 0`.
+
+Tool/report write failures still fail the workflow regardless of mode.
+
+When enabled on a pull request, `comment-on-pr: true` posts or updates one compact comment with the latest counts, scan duration, and an artifact reminder using a stable marker.
+
+Each run uploads:
+
+- `reports/project-doctor-report.md`
+- `reports/project-doctor-report.json`
+
+as the predictable artifact `project-doctor-reports` by default.
+
 ## Report Format
 
 The JSON report uses this top-level shape:
@@ -178,6 +220,7 @@ Useful local checks:
 godot --headless --path . --quit
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode warn --artifact-name project-doctor-reports
 ```
 
 See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
