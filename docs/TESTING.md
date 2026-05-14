@@ -10,6 +10,7 @@ The purpose of this test flow is to verify that:
 - the dock scan works,
 - the dock settings panel can save and reload shared scanner settings,
 - the headless scan works,
+- the reusable CI workflow can evaluate scan summaries in different modes,
 - the report schema stays stable,
 - the generated report files are written to `reports/`,
 - finding control settings stay deterministic,
@@ -24,6 +25,7 @@ Recommended order:
 1. Run `godot --headless --path . --quit`.
 2. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd`.
 3. Run `godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd`.
+4. Run `python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode report-only --artifact-name project-doctor-reports`.
 
 ## What Each Task Confirms
 
@@ -53,6 +55,14 @@ Confirms that:
 - markdown example docs do not produce broken-resource false positives,
 - ignore patterns, ignored finding IDs, and baseline entries suppress findings deterministically,
 - experimental unused-file behavior stays opt-in.
+
+### Project Doctor CI Summary Helper
+
+Confirms that:
+
+- the generated JSON report can be parsed outside Godot,
+- CI mode evaluation stays deterministic for `report-only`, `warn`, and `fail-on-errors`,
+- GitHub summary/comment markdown can be produced from the JSON report.
 
 ## Finding Control Checks
 
@@ -149,6 +159,13 @@ Check JSON:
 - `summary`
 - `findings`
 
+CI summary helper spot-check:
+
+1. Run `python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode warn --artifact-name project-doctor-reports`.
+2. Confirm the command exits successfully.
+3. Confirm the reported status matches the JSON summary counts.
+4. Repeat with `--mode fail-on-errors` after introducing or simulating an error finding if you need to verify failure behavior in CI.
+
 Check Markdown:
 
 - title header exists,
@@ -166,7 +183,21 @@ Equivalent headless commands:
 godot --headless --path . --quit
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode warn --artifact-name project-doctor-reports
 ```
+
+## CI Workflow Review
+
+The reusable workflow lives at `.github/workflows/project-doctor.yml`.
+
+Review points:
+
+- it still runs `godot --headless --path . --quit`,
+- it runs `res://addons/project_doctor_mini/tools/run_project_scan.gd`,
+- it uploads the Markdown and JSON reports as `project-doctor-reports`,
+- it writes a GitHub job summary,
+- it comments on PRs only when `comment-on-pr` is enabled and PR context exists,
+- it only fails on normal findings when `mode` requires it.
 
 ## Done Criteria For Testing Phase
 
