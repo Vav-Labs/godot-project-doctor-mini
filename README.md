@@ -305,7 +305,7 @@ Good first contribution areas:
 - Improve report formatting.
 - Add screenshots or short usage examples.
 
-Please keep changes small and focused while the project is still in MVP shape.
+Please keep changes small, focused, and aligned with the current release-candidate scope.
 
 ## License
 

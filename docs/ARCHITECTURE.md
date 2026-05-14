@@ -170,7 +170,7 @@ Each finding keeps a stable shape:
 
 - The scanner is still intentionally conservative and does not implement a full dependency graph.
 - Dynamic loads may not always be detected.
-- The scanner remains mostly monolithic for now to keep the MVP easy to reason about.
+- The scanner remains mostly monolithic for now to keep the release-candidate code path easy to reason about.
 - Some docs include illustrative `res://` paths, so scanner reference handling must stay careful to avoid noisy false positives.
 - The demo project and test fixtures are intentionally noisy and must stay excluded from the root repo scan by default.
 
