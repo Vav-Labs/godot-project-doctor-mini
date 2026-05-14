@@ -3,7 +3,7 @@
 [![Smoke Test](https://github.com/Vav-Labs/godot-project-doctor-mini/actions/workflows/smoke-test.yml/badge.svg)](https://github.com/Vav-Labs/godot-project-doctor-mini/actions/workflows/smoke-test.yml)
 [![Godot 4.6](https://img.shields.io/badge/Godot-4.6-blue)](https://godotengine.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status: Release Candidate](https://img.shields.io/badge/status-release--candidate-orange)](#status)
+[![Status: Public Release](https://img.shields.io/badge/status-public--release-green)](#status)
 
 Godot Project Doctor Mini is a small Godot 4 editor plugin that scans a project and generates simple Markdown and JSON diagnostic reports.
 
@@ -11,7 +11,7 @@ It helps catch common project hygiene issues such as missing scripts, broken res
 
 ## Status
 
-This project is ready for final public release validation. The scanner is intentionally conservative and should not be treated as a full dependency graph analyzer, but the repo now includes CI automation, a standalone demo project, regression coverage, and a measured benchmark path.
+This project is ready for public portfolio and Asset Library review. The scanner is intentionally conservative and should not be treated as a full dependency graph analyzer, but the repo includes CI automation, a standalone demo project, regression coverage, and a measured benchmark path.
 
 ## Why I Built This
 
@@ -191,7 +191,7 @@ The JSON report uses this top-level shape:
 ```json
 {
   "tool": "Godot Project Doctor Mini",
-  "tool_version": "0.2.0",
+  "tool_version": "0.2.2",
   "generated_at": "2026-05-13T00:00:00",
   "project_root": "res://",
   "scan_duration_ms": 18,
@@ -262,7 +262,7 @@ The repo now uses three layers of automated confidence:
 
 The benchmark script `run_project_doctor_benchmark.gd` generates 500 temporary scripts, scans the full repo fixture set, and reports the measured scan time before cleaning up the generated files.
 
-Performance note: scans a 500-file generated project fixture plus the repo fixtures in under 1 second locally. Measured on Windows with Godot 4.6.2: 588 total files, including 500 generated scripts, in about 696 ms.
+Performance note: scans a 500-file generated project fixture plus the repo fixtures in under 1 second locally. Measured on Windows with Godot 4.6.2: 590 total files, including 500 generated scripts, in about 493 ms.
 
 ## Development
 

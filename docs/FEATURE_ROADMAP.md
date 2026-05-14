@@ -128,7 +128,7 @@ This order reduces false positives first, then improves usability, then adds str
 
 ## Current State
 
-Milestones 1 through 5 are now implemented in the current release candidate. Future roadmap work can move to deeper dependency analysis, broader import heuristics, Asset Library packaging, and additional release-quality checks once the `0.2.0` line is tagged.
+Milestones 1 through 5 are implemented in the current public release line. Future roadmap work can move to deeper dependency analysis, broader import heuristics, and additional release-quality checks after the `0.2.2` Asset Library preparation release.
 
 ## Notes
 

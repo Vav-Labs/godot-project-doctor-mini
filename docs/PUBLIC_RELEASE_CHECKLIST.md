@@ -1,6 +1,6 @@
 # Public Release Checklist
 
-Checklist for preparing `Vav-Labs/godot-project-doctor-mini` for the `0.2.0` public release candidate.
+Checklist for preparing `Vav-Labs/godot-project-doctor-mini` for the `0.2.2` public release and Asset Library review.
 
 ## Repository About
 
@@ -107,34 +107,34 @@ Project Doctor smoke test passed.
 Project Doctor scanner test passed.
 Project Doctor integration test passed.
 Project Doctor scan complete: 0 errors, 1 warnings, 0 info
-Project Doctor benchmark complete: 500 generated files, 588 total files scanned, about 696 ms, Godot 4.6.2
+Project Doctor benchmark complete: 500 generated files, 590 total files scanned, about 493 ms, Godot 4.6.2
 ```
 
-The missing export presets warning is expected until `export_presets.cfg` exists.
+The root scan should stay clean because the demo project fixtures are ignored by the release scan config.
 
 The demo project is intentionally excluded from the root scan so its sample issues only appear in the dedicated integration test.
 
-## First Release Tag
+## Release Tag
 
 After committing and pushing the public-ready files:
 
 ```text
-git tag -a v0.2.0 -m "Release v0.2.0"
-git push origin v0.2.0
+git tag -a v0.2.2 -m "Release v0.2.2"
+git push origin v0.2.2
 ```
 
-Then create a GitHub release from the tag using the `CHANGELOG.md` `0.2.0` notes.
+Then create a GitHub release from the tag using the `CHANGELOG.md` `0.2.2` notes.
 
 ## Suggested Release Title
 
 ```text
-Godot Project Doctor Mini v0.2.0
+Godot Project Doctor Mini v0.2.2
 ```
 
 ## Suggested Release Summary
 
 ```text
-Public release candidate for Godot Project Doctor Mini: a Godot 4 editor plugin with shared settings, CI automation, export/import readiness checks, a standalone demo project, integration coverage, and a benchmark path.
+Public release for Godot Project Doctor Mini: a Godot 4 editor plugin with shared settings, CI automation, export/import readiness checks, a standalone demo project, integration coverage, benchmark notes, and Asset Library packaging polish.
 ```
 
 ## Before Marking The Repo Ready
@@ -147,5 +147,5 @@ Public release candidate for Godot Project Doctor Mini: a Godot 4 editor plugin 
 - Screenshot is added or README clearly says it is coming soon.
 - Demo project README explains the expected findings.
 - Benchmark note in README matches a real measured run.
-- `CHANGELOG.md` has `0.2.0`.
-- Release tag `v0.2.0` exists.
+- `CHANGELOG.md` has `0.2.2`.
+- Release tag `v0.2.2` exists.

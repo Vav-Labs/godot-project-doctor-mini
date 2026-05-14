@@ -251,7 +251,7 @@ func _validate_markdown_report_contents(report: Dictionary, failures: Array[Stri
 func _validate_markdown_rendering(failures: Array[String]) -> void:
     var sample_report := {
         "tool": "Godot Project Doctor Mini",
-        "tool_version": "0.2.0",
+        "tool_version": "0.2.2",
         "generated_at": "2026-01-01T00:00:00",
         "project_root": "res://",
         "scan_duration_ms": 5,

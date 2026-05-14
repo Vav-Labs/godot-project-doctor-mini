@@ -84,6 +84,7 @@ jobs:
             should_fail: ${{ steps.parse.outputs.should_fail }}
             summary_markdown: ${{ steps.parse.outputs.summary_markdown }}
             comment_markdown: ${{ steps.parse.outputs.comment_markdown }}
+            comment_marker: ${{ steps.parse.outputs.comment_marker }}
             status_title: ${{ steps.parse.outputs.status_title }}
             total_findings: ${{ steps.parse.outputs.total_findings }}
 
@@ -163,9 +164,10 @@ jobs:
               uses: actions/github-script@v7
               env:
                   PROJECT_DOCTOR_COMMENT: ${{ needs.project_doctor.outputs.comment_markdown }}
+                  PROJECT_DOCTOR_MARKER: ${{ needs.project_doctor.outputs.comment_marker }}
               with:
                   script: |
-                      const marker = '<!-- project-doctor-mini-report -->';
+                      const marker = process.env.PROJECT_DOCTOR_MARKER;
                       const issueNumber = context.payload.pull_request?.number;
 
                       if (!issueNumber) {
@@ -174,6 +176,11 @@ jobs:
                       }
 
                       const body = process.env.PROJECT_DOCTOR_COMMENT;
+                      if (!marker) {
+                        core.setFailed('Project Doctor comment marker output is missing.');
+                        return;
+                      }
+
                       if (!body || !body.includes(marker)) {
                         core.setFailed('Project Doctor comment body is missing the stable marker.');
                         return;

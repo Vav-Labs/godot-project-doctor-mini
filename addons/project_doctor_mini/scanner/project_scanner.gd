@@ -21,7 +21,7 @@ const LEGACY_IGNORED_FINDINGS_SETTING := "project_doctor_mini/ignored_findings"
 const BASELINE_FILE_SETTING := "project_doctor_mini/baseline_file"
 const EXPERIMENTAL_UNUSED_FILES_SETTING := "project_doctor_mini/enable_experimental_unused_files"
 const TOOL_NAME := "Godot Project Doctor Mini"
-const TOOL_VERSION_FALLBACK := "0.2.0"
+const TOOL_VERSION_FALLBACK := "0.2.2"
 const SEVERITY_ORDER := {
 	"error": 0,
 	"warning": 1,
