@@ -10,7 +10,8 @@ The purpose of this test flow is to verify that:
 - the dock scan works,
 - the headless scan works,
 - the report schema stays stable,
-- the generated report files are written to `reports/`.
+- the generated report files are written to `reports/`,
+- finding control settings stay deterministic.
 
 ## Fastest Checks
 
@@ -35,6 +36,8 @@ Confirms that the scanner runs and writes:
 - `reports/project-doctor-report.md`
 - `reports/project-doctor-report.json`
 
+It should fail only for tool/report write problems, not for normal warning or info findings.
+
 ### Project Doctor Smoke Test
 
 Confirms that:
@@ -43,7 +46,24 @@ Confirms that:
 - summary keys exist,
 - finding entries keep the expected schema,
 - severities remain valid,
-- both report writers successfully write output files.
+- both report writers successfully write output files,
+- markdown example docs do not produce broken-resource false positives,
+- ignore patterns, ignored finding IDs, and baseline entries suppress findings deterministically,
+- experimental unused-file behavior stays opt-in.
+
+## Finding Control Checks
+
+The default project config is stored in:
+
+- `project_doctor_settings.cfg`
+- `project_doctor_baseline.json`
+
+Key behavior to verify:
+
+- `ignored_path_patterns` skip folders and files consistently in dock and headless scans
+- `ignored_finding_ids` remove matching findings from the visible report
+- baseline entries suppress accepted findings before summary counts are calculated
+- `possibly_unused_file` is disabled unless `enable_experimental_unused_files=true`
 
 ## Manual Editor Test
 
@@ -96,6 +116,15 @@ These are controlled checks for the main finding types.
 1. Confirm the README references `docs/assets/project-doctor-dock.png`.
 2. Run a scan.
 3. Confirm the screenshot asset is not reported as `possibly_unused_file`.
+
+### Baseline And Ignore Behavior
+
+1. Add an entry to `project_doctor_baseline.json` matching a known finding by `id` and `path`.
+2. Run a scan.
+3. Confirm the accepted finding no longer appears and summary counts drop with it.
+4. Add a temporary ignore path pattern such as `res://tests/fixtures/**` to `project_doctor_settings.cfg`.
+5. Run a scan again.
+6. Confirm findings from that path no longer appear.
 
 ## Report Checks
 

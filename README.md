@@ -39,7 +39,7 @@ Current preview asset showing the dock layout and primary controls.
 | Scenes with many nodes | Warning | Highlights scenes that may need review or splitting. |
 | Scripts using `_process()` | Info | Marks scripts with per-frame work for manual review. |
 | Empty folders | Info | Helps keep the project tree tidy. |
-| Possibly unused files | Info | Finds files not referenced by scanned text resources. |
+| Possibly unused files | Info | Experimental check for files not referenced by scanned text resources. Disabled by default. |
 | Missing export presets | Warning | Reminds you to create export presets before release builds. |
 
 ## Requirements
@@ -75,6 +75,24 @@ Each scan writes:
 - `reports/project-doctor-report.md`
 - `reports/project-doctor-report.json`
 
+## Finding Control
+
+The scanner reads one shared project config file for both dock scans and headless scans:
+
+- `project_doctor_settings.cfg`
+- `project_doctor_baseline.json`
+
+Supported controls:
+
+- `ignored_path_patterns`: skip folders or files using project-relative values such as `res://reports`, `res://docs/examples`, or glob-style patterns like `res://tests/fixtures/**`
+- `ignored_finding_ids`: hide specific finding IDs from reports
+- `baseline_file`: path to a JSON file of accepted findings
+- `enable_experimental_unused_files`: opt in to the `possibly_unused_file` check
+
+Baseline entries match by `id` and `path`, with optional `message` for stricter matching. Accepted findings are removed before report summaries are built, so counts match the visible findings.
+
+The default config keeps `possibly_unused_file` disabled because it is still experimental and should not block CI by default.
+
 ## Headless Scan
 
 You can run the scanner without opening the editor dock:
@@ -82,6 +100,8 @@ You can run the scanner without opening the editor dock:
 ```text
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
 ```
+
+The headless scan exits non-zero only when the tool cannot create the reports directory or cannot write the Markdown/JSON reports. Normal warning and info findings do not fail the command.
 
 The smoke test validates the report schema and confirms that the report writers can create files:
 
@@ -165,9 +185,9 @@ See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
 ## Known Limitations
 
 - Dynamic resource loads may not always be detected.
-- `Possibly unused file` findings must be manually reviewed before deleting files.
+- `Possibly unused file` is experimental, disabled by default, and must be manually reviewed before deleting files.
 - The current scanner uses simple text/resource checks, not a full Godot dependency graph.
-- Thresholds are currently hardcoded defaults.
+- Settings currently live in `project_doctor_settings.cfg`; there is no dedicated editor settings UI yet.
 - The plugin is editor-only and does not appear in the running game window.
 
 ## Roadmap
