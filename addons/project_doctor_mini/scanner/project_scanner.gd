@@ -3,6 +3,7 @@ extends RefCounted
 
 const ProcessUsageCheck = preload("res://addons/project_doctor_mini/scanner/checks/process_usage_check.gd")
 const ExportPresetsCheck = preload("res://addons/project_doctor_mini/scanner/checks/export_presets_check.gd")
+const ImportSettingsCheck = preload("res://addons/project_doctor_mini/scanner/checks/import_settings_check.gd")
 
 const SETTINGS_FILE_PATH := "res://project_doctor_settings.cfg"
 const DEFAULT_LARGE_TEXTURE_THRESHOLD := 2048
@@ -66,6 +67,7 @@ func scan() -> Dictionary:
 	_append_findings(ProcessUsageCheck.new().run(files, Callable(self , "_read_text_file")))
 	_check_empty_folders()
 	_check_unused_files()
+	_append_findings(ImportSettingsCheck.new().run(files, large_texture_threshold))
 	_append_findings(ExportPresetsCheck.new().run())
 	_filter_findings()
 	_sort_findings()

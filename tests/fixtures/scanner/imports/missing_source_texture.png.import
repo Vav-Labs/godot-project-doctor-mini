@@ -1,0 +1,14 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+path="res://tests/fixtures/scanner/linked_data.tres"
+
+[deps]
+
+source_file="res://tests/fixtures/scanner/imports/does_not_exist.png"
+dest_files=["res://tests/fixtures/scanner/linked_data.tres"]
+
+[params]
+
+compress/mode=0
