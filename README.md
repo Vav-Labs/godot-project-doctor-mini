@@ -13,6 +13,17 @@ It helps catch common project hygiene issues such as missing scripts, broken res
 
 This project is ready for final public release validation. The scanner is intentionally conservative and should not be treated as a full dependency graph analyzer, but the repo now includes CI automation, a standalone demo project, regression coverage, and a measured benchmark path.
 
+## Why I Built This
+
+Godot projects can accumulate broken scene references, old assets, oversized textures, and export-readiness gaps quietly. I built Project Doctor Mini as a small editor tool that makes those issues visible early, both inside the editor and in pull requests.
+
+The implementation favors a few engineering choices:
+
+- Schema-based reports keep the dock, Markdown writer, JSON writer, CI summary, and PR comments aligned around one stable data contract.
+- Headless mode makes the scanner useful in CI and for repeatable local checks, not only as an interactive editor dock.
+- Separate Markdown and JSON writers keep human review and automation concerns independent while using the same scan result.
+- Conservative checks and baseline/ignore controls reduce noisy findings, which matters more than trying to be a full dependency graph analyzer too early.
+
 ## Features
 
 - Godot editor dock named `Project Doctor`
@@ -251,7 +262,7 @@ The repo now uses three layers of automated confidence:
 
 The benchmark script `run_project_doctor_benchmark.gd` generates 500 temporary scripts, scans the full repo fixture set, and reports the measured scan time before cleaning up the generated files.
 
-Measured local benchmark on Windows with Godot 4.6.2: the included benchmark scanned 588 total files, including 500 generated scripts, in about 696 ms.
+Performance note: scans a 500-file generated project fixture plus the repo fixtures in under 1 second locally. Measured on Windows with Godot 4.6.2: 588 total files, including 500 generated scripts, in about 696 ms.
 
 ## Development
 
