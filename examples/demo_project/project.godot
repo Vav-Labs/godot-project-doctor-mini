@@ -1,0 +1,15 @@
+; Engine configuration file.
+; Minimal standalone demo project for Godot Project Doctor Mini.
+
+config_version=5
+
+[application]
+
+config/name="Project Doctor Demo Project"
+config/description="Minimal demo project with intentional findings for Godot Project Doctor Mini."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.6", "Forward Plus")
+
+[editor_plugins]
+
+enabled=PackedStringArray()

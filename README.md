@@ -3,7 +3,7 @@
 [![Smoke Test](https://github.com/Vav-Labs/godot-project-doctor-mini/actions/workflows/smoke-test.yml/badge.svg)](https://github.com/Vav-Labs/godot-project-doctor-mini/actions/workflows/smoke-test.yml)
 [![Godot 4.6](https://img.shields.io/badge/Godot-4.6-blue)](https://godotengine.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status: MVP](https://img.shields.io/badge/status-MVP-orange)](#roadmap)
+[![Status: Release Candidate](https://img.shields.io/badge/status-release--candidate-orange)](#status)
 
 Godot Project Doctor Mini is a small Godot 4 editor plugin that scans a project and generates simple Markdown and JSON diagnostic reports.
 
@@ -11,7 +11,7 @@ It helps catch common project hygiene issues such as missing scripts, broken res
 
 ## Status
 
-This project is an early MVP. It is usable for local project checks, but the scanner is intentionally conservative and should not be treated as a full dependency graph analyzer yet.
+This project is ready for final public release validation. The scanner is intentionally conservative and should not be treated as a full dependency graph analyzer, but the repo now includes CI automation, a standalone demo project, regression coverage, and a measured benchmark path.
 
 ## Features
 
@@ -63,6 +63,18 @@ To use the plugin in another Godot project:
 5. Open the `Project Doctor` dock in the editor.
 
 To try it in this repository, open this project in Godot and enable the plugin from the same Plugins screen.
+
+## Demo Project
+
+A standalone sample project now lives in [examples/demo_project](examples/demo_project). It is intentionally noisy and ignored by default in the root repo scan so the main project report stays stable.
+
+The demo project includes:
+
+- a broken scene script reference,
+- an oversized committed texture,
+- an intentionally incomplete export preset.
+
+See [examples/demo_project/README.md](examples/demo_project/README.md) for how to copy the plugin into the demo project and what findings to expect.
 
 ## Usage
 
@@ -159,6 +171,8 @@ Each run uploads:
 
 as the predictable artifact `project-doctor-reports` by default.
 
+The repository smoke workflow also runs the dedicated scanner regression test, the demo-project integration test, and the benchmark script so CI coverage no longer depends on the smoke test alone.
+
 ## Report Format
 
 The JSON report uses this top-level shape:
@@ -166,7 +180,7 @@ The JSON report uses this top-level shape:
 ```json
 {
   "tool": "Godot Project Doctor Mini",
-  "tool_version": "0.1.0",
+  "tool_version": "0.2.0",
   "generated_at": "2026-05-13T00:00:00",
   "project_root": "res://",
   "scan_duration_ms": 18,
@@ -216,11 +230,28 @@ addons/project_doctor_mini/
   project_doctor_plugin.gd
   project_doctor_dock.gd
   scanner/project_scanner.gd
-  report/markdown_report_writer.gd
-  report/json_report_writer.gd
   tools/run_project_scan.gd
   tools/run_project_doctor_smoke_test.gd
+  tools/run_project_doctor_scanner_test.gd
+  tools/run_project_doctor_integration_test.gd
+  tools/run_project_doctor_benchmark.gd
+  report/markdown_report_writer.gd
+  report/json_report_writer.gd
+examples/demo_project/
+tests/fixtures/scanner/
 ```
+
+## Testing And Quality
+
+The repo now uses three layers of automated confidence:
+
+- `run_project_doctor_smoke_test.gd` for schema and writer sanity,
+- `run_project_doctor_scanner_test.gd` for deterministic scanner behavior,
+- `run_project_doctor_integration_test.gd` for end-to-end scanning of the standalone demo project.
+
+The benchmark script `run_project_doctor_benchmark.gd` generates 500 temporary scripts, scans the full repo fixture set, and reports the measured scan time before cleaning up the generated files.
+
+Measured local benchmark on Windows with Godot 4.6.2: the included benchmark scanned 588 total files, including 500 generated scripts, in about 696 ms.
 
 ## Development
 
@@ -230,6 +261,9 @@ Useful local checks:
 godot --headless --path . --quit
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_scan.gd
 godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_smoke_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_scanner_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_integration_test.gd
+godot --headless --path . --script res://addons/project_doctor_mini/tools/run_project_doctor_benchmark.gd
 python .github/scripts/project_doctor_summary.py --report reports/project-doctor-report.json --mode warn --artifact-name project-doctor-reports
 ```
 
@@ -251,18 +285,13 @@ See [docs/TESTING.md](docs/TESTING.md) for the manual and headless testing flow.
 - The current scanner uses simple text/resource checks, not a full Godot dependency graph.
 - Export readiness checks only validate obvious preset fields that are clearly present in `export_presets.cfg`.
 - Import settings analysis is conservative and currently focuses on parse failures, missing references, and a small set of texture import risks.
+- The demo project is intentionally excluded from the root repo scan by default so its sample findings do not pollute the main report.
 - The plugin is editor-only and does not appear in the running game window.
 
 ## Roadmap
 
-- Plugin settings for thresholds and ignore patterns
-- Baseline file for accepted findings
-- More conservative unused-file detection
-- Export profile readiness checks per platform
-- Import settings analysis
-- Scene dependency graph
-- GitHub Action for headless scan on pull requests
-- Asset Library packaging checklist
+- Completed in the current release line: finding control, dock settings/report UX, CI automation, export/import readiness checks, demo fixtures, integration tests, and a benchmark path.
+- Still open after release closure: deeper scene dependency analysis, broader import heuristics, and Asset Library packaging polish.
 
 ## Contributing
 
