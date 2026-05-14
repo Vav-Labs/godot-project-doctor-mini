@@ -8,7 +8,7 @@ from typing import Any
 
 
 VALID_MODES = {"report-only", "warn", "fail-on-errors"}
-COMMENT_MARKER = "<!-- project-doctor-mini-report -->"
+COMMENT_MARKER = "<!-- godot-project-doctor-mini -->"
 
 
 def main() -> int:

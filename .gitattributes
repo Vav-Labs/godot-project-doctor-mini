@@ -16,3 +16,14 @@
 *.jpeg binary
 *.webp binary
 *.ico binary
+
+# Keep generated GitHub source archives focused on the plugin package.
+.github/ export-ignore
+docs/ export-ignore
+examples/ export-ignore
+tests/ export-ignore
+reports/ export-ignore
+project_doctor_baseline.json export-ignore
+project_doctor_settings.cfg export-ignore
+docs/FEATURE_ROADMAP.md export-ignore
+docs/PUBLIC_RELEASE_CHECKLIST.md export-ignore
