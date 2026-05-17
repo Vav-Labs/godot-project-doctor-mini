@@ -25,6 +25,7 @@
 .vscode/ export-ignore
 docs/ export-ignore
 examples/ export-ignore
+icon.png export-ignore
 icon.svg export-ignore
 icon.svg.import export-ignore
 project.godot export-ignore
