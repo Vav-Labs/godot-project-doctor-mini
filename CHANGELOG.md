@@ -10,6 +10,12 @@ This project follows simple semantic versioning while the plugin evolves toward 
 
 - No unreleased changes yet.
 
+## [0.2.5] - 2026-05-17
+
+### Changed
+
+- Remove leftover `[dotnet]` section from `project.godot`. The plugin is pure GDScript and does not use C#.
+
 ## [0.2.4] - 2026-05-14
 
 ### Changed
