@@ -72,7 +72,8 @@ This project follows simple semantic versioning while the plugin evolves toward 
 - Smoke test script for report schema and writer validation.
 - Basic checks for missing scripts, broken resource paths, large textures, scene node count, `_process()` usage, empty folders, possibly unused files, and missing export presets.
 
-[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.5...HEAD
+[0.2.5]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.1...v0.2.2

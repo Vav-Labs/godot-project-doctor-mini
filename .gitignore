@@ -46,6 +46,9 @@ examples/demo_project/addons/project_doctor_mini/
 # Local screenshot sandbox
 sandbox_screenshot/
 
+# IDE workspace files
+*.code-workspace
+
 # OS files
 .DS_Store
 Thumbs.db

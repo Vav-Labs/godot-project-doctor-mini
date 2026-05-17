@@ -18,12 +18,19 @@
 *.ico binary
 
 # Keep generated GitHub source archives focused on the plugin package.
+.editorconfig export-ignore
 .github/ export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.vscode/ export-ignore
 docs/ export-ignore
 examples/ export-ignore
-tests/ export-ignore
-reports/ export-ignore
+icon.svg export-ignore
+icon.svg.import export-ignore
+project.godot export-ignore
 project_doctor_baseline.json export-ignore
 project_doctor_settings.cfg export-ignore
-docs/FEATURE_ROADMAP.md export-ignore
-docs/PUBLIC_RELEASE_CHECKLIST.md export-ignore
+reports/ export-ignore
+sandbox_screenshot/ export-ignore
+scenes/ export-ignore
+tests/ export-ignore

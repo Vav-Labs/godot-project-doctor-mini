@@ -1,7 +1,7 @@
 @tool
 extends RefCounted
 
-const TEXTURE_SOURCE_EXTENSIONS := ["png", "jpg", "jpeg", "webp", "svg"]
+const TEXTURE_SOURCE_EXTENSIONS := ["png", "jpg", "jpeg", "webp"]
 
 func run(files: Array[String], large_texture_threshold: int) -> Array[Dictionary]:
     var findings: Array[Dictionary] = []
