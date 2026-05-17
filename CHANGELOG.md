@@ -10,6 +10,18 @@ This project follows simple semantic versioning while the plugin evolves toward 
 
 - No unreleased changes yet.
 
+## [0.2.6] - 2026-05-17
+
+### Fixed
+
+- Remove `svg` from texture source extensions in `import_settings_check.gd`. SVGs cannot be loaded with `Image.load()` at runtime and produced a console warning on every scan of a project with an SVG icon.
+
+### Changed
+
+- Extend `export-ignore` rules in `.gitattributes` so GitHub source archives contain only `addons/`, `README.md`, `LICENSE`, `CHANGELOG.md`, and `CONTRIBUTING.md`. Previously `.vscode/`, `project.godot`, `icon.svg`, `icon.svg.import`, and `scenes/` were included.
+- Update `PUBLIC_RELEASE_CHECKLIST.md` version references from `0.2.4` to `0.2.5`.
+- Add `*.code-workspace` to `.gitignore`.
+
 ## [0.2.5] - 2026-05-17
 
 ### Changed
@@ -72,7 +84,8 @@ This project follows simple semantic versioning while the plugin evolves toward 
 - Smoke test script for report schema and writer validation.
 - Basic checks for missing scripts, broken resource paths, large textures, scene node count, `_process()` usage, empty folders, possibly unused files, and missing export presets.
 
-[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.6...HEAD
+[0.2.6]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/Vav-Labs/godot-project-doctor-mini/compare/v0.2.2...v0.2.3
