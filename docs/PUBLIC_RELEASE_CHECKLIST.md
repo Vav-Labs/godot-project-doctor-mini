@@ -1,6 +1,6 @@
 # Public Release Checklist
 
-Checklist for preparing `Vav-Labs/godot-project-doctor-mini` for the `0.2.7` public release and Asset Library review.
+Checklist for preparing `Vav-Labs/godot-project-doctor-mini` for the `0.2.8` public release and Asset Library review.
 
 ## Repository About
 
@@ -119,16 +119,16 @@ The demo project is intentionally excluded from the root scan so its sample issu
 After committing and pushing the public-ready files:
 
 ```text
-git tag -a v0.2.7 -m "Release v0.2.7"
-git push origin v0.2.7
+git tag -a v0.2.8 -m "Release v0.2.8"
+git push origin v0.2.8
 ```
 
-Then create a GitHub release from the tag using the `CHANGELOG.md` `0.2.7` notes.
+Then create a GitHub release from the tag using the `CHANGELOG.md` `0.2.8` notes.
 
 ## Suggested Release Title
 
 ```text
-Godot Project Doctor Mini v0.2.7
+Godot Project Doctor Mini v0.2.8
 ```
 
 ## Suggested Release Summary
@@ -147,5 +147,5 @@ Public release for Godot Project Doctor Mini: a Godot 4 editor plugin with share
 - Screenshot is added or README clearly says it is coming soon.
 - Demo project README explains the expected findings.
 - Benchmark note in README matches a real measured run.
-- `CHANGELOG.md` has `0.2.7`.
-- Release tag `v0.2.7` exists.
+- `CHANGELOG.md` has `0.2.8`.
+- Release tag `v0.2.8` exists.
