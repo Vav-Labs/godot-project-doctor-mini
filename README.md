@@ -191,7 +191,7 @@ The JSON report uses this top-level shape:
 ```json
 {
   "tool": "Godot Project Doctor Mini",
-  "tool_version": "0.2.4",
+  "tool_version": "0.2.6",
   "generated_at": "2026-05-13T00:00:00",
   "project_root": "res://",
   "scan_duration_ms": 18,
@@ -316,7 +316,7 @@ Good first contribution areas:
 - Improve report formatting.
 - Add screenshots or short usage examples.
 
-Please keep changes small, focused, and aligned with the current release-candidate scope.
+Please keep changes small, focused, and aligned with the current release scope.
 
 ## License
 
