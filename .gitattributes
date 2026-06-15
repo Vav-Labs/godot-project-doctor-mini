@@ -35,3 +35,11 @@ reports/ export-ignore
 sandbox_screenshot/ export-ignore
 scenes/ export-ignore
 tests/ export-ignore
+
+# Root docs are also bundled inside addons/project_doctor_mini/, so keep the
+# duplicates out of the packaged archive (see issue #9).
+CHANGELOG.md export-ignore
+CONTRIBUTING.md export-ignore
+LICENSE export-ignore
+README.md export-ignore
+.markdownlint.json export-ignore
